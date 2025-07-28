@@ -1,0 +1,60 @@
+{
+  "pages": {
+    "shop": {
+      "sections": [
+        {
+          "id": "a1b2c3d4-e5f6-4f7f-8d2b-3a5c6e7f8d9a",
+          "name": "Men",
+          "code": "MENS_CATEGORY",
+          "description": "Fashion for Men",
+          "thumbnail": "./images/category-men.png",
+          "banner": "./images/banner-men.jpg",
+          "categoryType": [
+            {
+              "id": "b1c2d3e4-f5a6-4b8b-9e0c-1d2e3f4a5b6c", 
+              "name": "Hoodies",
+              "code": "HOODIES",
+              "description": "Men's Hoodies",
+              "thumbnail": "./images/category-men-hoodies.png"
+            },
+            {
+              "id": "c1d2e3f4-a5b6-4c9c-8f1d-2e3f4a5b6c7d", 
+              "name": "Jeans",
+              "code": "JEANS",
+              "description": "Men's Jeans",
+              "thumbnail": "./images/category-men-jeans.png"
+            }
+          ]
+        },
+        {
+          "id": "8d2f7a0b-1c3d-4e5f-6a7b-8c9d0e1f2a3b",
+          "name": "Women",
+          "code": "WOMENS_CATEGORY",
+          "description": "Fashion for Women",
+          "thumbnail": "./images/category-women.png",
+          "banner": "./images/banner-women.jpg",
+          "categoryType": [
+            {
+              "id": "f1g2h3i4-j5k6-4l8l-9m0n-1o2p3q4r5s6t", 
+              "name": "Dresses",
+              "code": "DRESSES",
+              "description": "Women's Dresses",
+              "thumbnail": "./images/category-women-dresses.png"
+            },
+            {
+              "id": "g1h2i3j4-k5l6-4m8m-9n0o-1p2q3r4s5t6u", 
+              "name": "Skirts",
+              "code": "SKIRTS",
+              "description": "Women's Skirts",
+              "thumbnail": "./images/category-women-skirts.png"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "footer": {
+    "title": "ShopEase",
+    "copyright": "© 2025 ShopEase. All rights reserved."
+  }
+}
