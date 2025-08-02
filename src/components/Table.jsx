@@ -24,7 +24,7 @@ function Filter({ column, table }) {
       value={value}
       onChange={onChange}
       placeholder={`Filter ${column.columnDef.header}...`}
-      className="w-full px-3 py-1 text-sm border rounded-md dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+      className="w-full px-3 py-1 text-sm border rounded-md dark:bg-gray-800 dark:border-gray-700 text-white"
     />
   );
 }

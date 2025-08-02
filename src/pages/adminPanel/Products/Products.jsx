@@ -92,7 +92,7 @@ const Products = () => { // Renamed from ProductList for clarity, though your fi
   return (
     <div className="pt-20 pb-5 ml-80"> {/* ml-80 will push the whole content to the right */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+        <h2 className="text-xl font-semibold text-gray-900">
           Products
         </h2>
         <button

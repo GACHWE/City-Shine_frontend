@@ -1,100 +1,76 @@
-// import React, { useEffect } from 'react';
-// import HeroSection from './components/HeroSection/HeroSection';
-// import NewArrivals from './components/Sections/NewArrivals';
-// import Category from './components/Sections/Categories/Category';
-// import content from './data/content.json';
-// import Footer from './components/Footer/Footer';
-// import { getAllCategories } from './api/fetchCategories'; // <- Fixed import
-// import { useDispatch } from 'react-redux';
-// import { loadCategories } from './store/features/category';
-// import { setLoading } from './store/features/common';
-
-// const Shop = () => {
-//   const dispatch = useDispatch();
-
-//   useEffect(() => {
-//     dispatch(setLoading(true));
-//     getAllCategories()
-//       .then(res => {
-//         dispatch(loadCategories(res));
-//       })
-//       .catch(err => {
-//         console.error('Failed to fetch categories:', err);
-//       })
-//       .finally(() => {
-//         dispatch(setLoading(false));
-//       });
-//   }, [dispatch]);
-
-//   return (
-//     <>
-//       <HeroSection />
-//       <NewArrivals />
-//       {content?.pages?.shop?.sections?.map((item, index) => (
-//         <Category key={item?.title + index} {...item} />
-//       ))}
-//       <Footer content={content?.footer} />
-//     </>
-//   );
-// };
-
-// export default Shop;
-
 import React, { useEffect } from 'react';
 import HeroSection from './components/HeroSection/HeroSection';
 import NewArrivals from './components/Sections/NewArrivals';
 import Category from './components/Sections/Categories/Category';
-import content from './data/content.json'; // Assuming this path is correct
-import Footer from './components/Footer/Footer';
+import Footer from './components/Footer/Footer'; 
+
 import { getAllCategories } from './api/fetchCategories';
-import { useDispatch } from 'react-redux';
+
+import { useDispatch, useSelector } from 'react-redux';
 import { loadCategories } from './store/features/category';
 import { setLoading } from './store/features/common';
 
 const Shop = () => {
   const dispatch = useDispatch();
 
+  // Get categories from the Redux store
+const categoriesFromRedux = useSelector(state => state.categoryState.categories);
+  
   useEffect(() => {
-    dispatch(setLoading(true));
+    dispatch(setLoading(true)); // Set loading before API call
+
+    // Fetch Categories
     getAllCategories()
       .then(res => {
-        dispatch(loadCategories(res));
+        dispatch(loadCategories(res)); // Load fetched categories into Redux
       })
       .catch(err => {
         console.error('Failed to fetch categories:', err);
+        // TODO: Implement user-facing error message here
       })
       .finally(() => {
-        dispatch(setLoading(false));
+        dispatch(setLoading(false)); // Hide loading indicator
       });
-  }, [dispatch]);
 
-  // Debugging: Log the sections data before mapping
-  // This will help you see if any 'item' is missing a 'title'
-  console.log("Content sections for Shop page:", content?.pages?.shop?.sections);
+   
+  }, [dispatch]); // Effect runs once on component mount
+
+  // Debugging: Log the categories from Redux store to confirm backend data
+  console.log("Categories from Redux store (backend data):", categoriesFromRedux);
 
   return (
     <>
       <HeroSection />
       <NewArrivals />
-      {/* Body Section: Mapping over content sections */}
-      {content?.pages?.shop?.sections?.map((item, index) => {
-        // Debugging: Log the item and its title being used for the key
-        // Check your browser's console for output like "Category item title:", "Key generated:"
-        console.log(`Category item at index ${index}:`, item);
-        console.log(`Key generated for Category: ${item?.title + index}`);
 
-        // The key should ideally be a unique, stable ID from your data.
-        // If 'item' has a unique 'id' or 'uuid' property from your backend, use that instead.
-        // For example: <Category key={item.id} {...item} />
-        // If 'title' is guaranteed to be unique and always present, it could be used alone:
-        // <Category key={item.title} {...item} />
-        // If 'title' can be missing, ensure a fallback or fix your data:
+      {/* Render categories fetched from the backend (from Redux store) */}
+      {categoriesFromRedux?.map((categoryItem) => {
+        // Log individual category item to verify structure from backend
+        console.log("Rendering backend category item:", categoryItem);
+
         return (
-          <Category key={item?.title || `category-${index}`} {...item} />
-          // The above uses a fallback key if item.title is undefined/null
+          <Category
+            // Use the actual 'id' from your backend category for the key
+            key={categoryItem.id}
+            id={categoryItem.id}
+            name={categoryItem.name}
+            code={categoryItem.code}
+            description={categoryItem.description}
+            thumbnail={categoryItem.thumbnail}
+            banner={categoryItem.banner}
+            // Pass 'categoryTypes' (plural) as per backend DTO
+            categoryType={categoryItem.categoryTypes}
+          />
         );
       })}
-      <Footer content={content?.footer} />
+
+      {/* Footer component. 
+          If its content was previously from content.json, you need to:
+          1. Hardcode it directly within the Footer component if it's always static.
+          2. Fetch it from the backend via an API call and pass it as a prop (recommended for dynamic content).
+          For now, this assumes Footer can render without the 'content' prop or gets it from elsewhere.
+      */}
+      <Footer /* If footer content is dynamic, pass it here, e.g., content={footerContent} */ />
     </>
   );
 };
