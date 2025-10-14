@@ -1,4 +1,3 @@
-// components/TimeSlotPicker.jsx
 import React from 'react';
 
 const TimeSlotPicker = ({ selectedDate, selectedTime, setSelectedTime }) => {
@@ -6,19 +5,19 @@ const TimeSlotPicker = ({ selectedDate, selectedTime, setSelectedTime }) => {
     const slots = [];
     const now = new Date();
     const selected = new Date(dateString);
-    const isWeekend = selected.getDay() === 0;
+    const isSunday = selected.getDay() === 0;
     const isToday = now.toDateString() === selected.toDateString();
 
-    if (isWeekend) {
-      // Weekend slots: 12:00 - 18:00 in 3-hour intervals
+    if (isSunday) {
+      // Sunday slots: 12:00 - 17:00 in 3-hour intervals
       let startHour = 12;
-      const endHour = 18;
-      
+      const endHour = 17; // 5 PM
+
       if (isToday) {
         const currentHour = now.getHours();
         startHour = Math.max(startHour, currentHour + 1); // At least 1 hour from now
       }
-      
+
       for (let hour = startHour; hour < endHour; hour += 3) {
         const end = hour + 3;
         if (end <= endHour) {
@@ -26,15 +25,15 @@ const TimeSlotPicker = ({ selectedDate, selectedTime, setSelectedTime }) => {
         }
       }
     } else {
-      // Weekday slots: 8:00 - 18:00 in 3-hour intervals
+      // Weekday slots: 8:00 - 17:00 in 3-hour intervals
       let startHour = 8;
-      const endHour = 18;
-      
+      const endHour = 17; // 5 PM
+
       if (isToday) {
         const currentHour = now.getHours();
         startHour = Math.max(startHour, currentHour + 1); // At least 1 hour from now
       }
-      
+
       for (let hour = startHour; hour < endHour; hour += 3) {
         const end = hour + 3;
         if (end <= endHour) {
@@ -42,7 +41,7 @@ const TimeSlotPicker = ({ selectedDate, selectedTime, setSelectedTime }) => {
         }
       }
     }
-    
+
     return slots;
   };
 
@@ -83,8 +82,8 @@ const TimeSlotPicker = ({ selectedDate, selectedTime, setSelectedTime }) => {
         <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
           <p>
             {new Date(selectedDate).getDay() === 0 
-              ? "Sundays deliveries are available in the afternoon only."
-              : "Weekday deliveries are available throughout the day."
+              ? "Sunday deliveries are available in the afternoon only (12:00 PM - 5:00 PM)."
+              : "Weekday deliveries are available from 8:00 AM to 5:00 PM."
             }
           </p>
         </div>
