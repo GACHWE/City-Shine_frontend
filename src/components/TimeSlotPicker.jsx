@@ -27,7 +27,7 @@ const TimeSlotPicker = ({ selectedDate, selectedTime, setSelectedTime }) => {
     } else {
       // Weekday slots: 8:00 - 17:00 in 3-hour intervals
       let startHour = 8;
-      const endHour = 17; // 5 PM
+      const endHour = 18; // 5 PM
 
       if (isToday) {
         const currentHour = now.getHours();
