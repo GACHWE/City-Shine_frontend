@@ -3,7 +3,7 @@ import HeroImg from '../../assets/img/appliance.avif'
 
 const HeroSection = () => {
   return (
-    <div className='relative flex items-center bg-cover flex-start bg-center text-left h-svh w-full' style={{backgroundImage
+    <div className='relative flex items-center bg-cover flex-start bg-center text-left h-svh w-full pt-20' style={{backgroundImage
     : `url(${HeroImg})`}}>
         <div className='absolute top-0 right-0 bottom-0 left-0 '></div>
             <main className='px-10 lg:px-24 z-50'>

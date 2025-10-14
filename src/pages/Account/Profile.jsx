@@ -4,76 +4,122 @@ import { removeAddress, selectUserInfo } from "../../store/features/user";
 import AddAddress from "./AddAddress";
 import { setLoading } from "../../store/features/common";
 import { deleteAddressAPI } from "../../api/userInfo";
+import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 
 const Profile = () => {
   const userInfo = useSelector(selectUserInfo);
   const [addAddress, setAddAddress] = useState(false);
   const dispatch = useDispatch();
 
-  const onDeleteAddress = useCallback((id)=>{
-      dispatch(setLoading(true));
-      deleteAddressAPI(id).then(res=>{
+  const onDeleteAddress = useCallback((id) => {
+    dispatch(setLoading(true));
+    deleteAddressAPI(id)
+      .then((res) => {
         dispatch(removeAddress(id));
-      }).catch(err=>{
-
-      }).finally(()=>{
-        dispatch(setLoading(false));
       })
-  },[dispatch]);
+      .catch((err) => {
+        console.error("Failed to delete address:", err);
+      })
+      .finally(() => {
+        dispatch(setLoading(false));
+      });
+  }, [dispatch]);
 
   return (
     <div>
-      <h1 className="text-2xl">My Info</h1>
-      {!addAddress && (
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">My Profile</h1>
+      
+      {!addAddress ? (
         <div>
-          <div className="flex gap-2">
-            <h2 className="text-xl pt-4">Contact Details</h2>
-            <button className="underline text-blue-900 mt-4">Edit</button>
+          {/* Contact Details */}
+          <div className="mb-8">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Contact Details</h2>
+              <button className="flex items-center text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors">
+                <FaEdit className="w-4 h-4 mr-1" />
+                Edit
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Full Name</p>
+                <p className="text-gray-900 dark:text-white">
+                  {userInfo?.firstName} {userInfo?.lastName}
+                </p>
+              </div>
+              
+              <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Phone Number</p>
+                <p className="text-gray-900 dark:text-white">{userInfo?.phoneNumber ?? "Not provided"}</p>
+              </div>
+              
+              <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg md:col-span-2">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Email</p>
+                <p className="text-gray-900 dark:text-white">{userInfo?.email}</p>
+              </div>
+            </div>
           </div>
-          <div className="pt-4">
-            <p className="text-gray-700 py-2 font-bold">Full Name</p>
-            <p>
-              {userInfo?.firstName} {userInfo?.lastName}
-            </p>
-            <p className="text-gray-700 py-2 font-bold">Phone Number</p>
-            <p>{userInfo?.phoneNumber ?? "None"}</p>
-            <p className="text-gray-700 py-2 font-bold">Email</p>
-            <p>{userInfo?.email}</p>
-          </div>
+
           {/* Addresses */}
-          <div className="pt-4">
-            <div className="flex gap-12">
-              <h3 className="text-lg font-bold">Address</h3>
-              <button className="underline text-blue-900" onClick={()=> setAddAddress(true)}>Add New</button>
+          <div>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Addresses</h2>
+              <button 
+                onClick={() => setAddAddress(true)}
+                className="flex items-center bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
+              >
+                <FaPlus className="w-4 h-4 mr-1" />
+                Add New
+              </button>
             </div>
 
-            <div className="pt-4 grid grid-cols-1 lg:grid-cols-4 md:grid-cols-3 gap-8 pb-10 mb-8">
-              {userInfo?.addressList?.map((address, index) => {
-                return (
+            {userInfo?.addressList?.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {userInfo.addressList.map((address, index) => (
                   <div
                     key={index}
-                    className="bg-gray-200 border rounded-lg p-4"
+                    className="border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:shadow-md dark:hover:shadow-gray-800/20 transition-shadow"
                   >
-                    <p className="py-2 font-bold">{address?.name}</p>
-                    <p className="pb-2">{address?.phoneNumber}</p>
-                    <p className="pb-2">
-                      {address?.street},{address?.city},{address?.state}
+                    <p className="font-medium text-gray-900 dark:text-white mb-2">{address?.name}</p>
+                    <p className="text-gray-600 dark:text-gray-400 mb-2">{address?.phoneNumber}</p>
+                    <p className="text-gray-600 dark:text-gray-400 mb-2">
+                      {address?.street}, {address?.city}, {address?.state}
                     </p>
-                    <p>{address?.zipCode}</p>
-                    <div className="flex gap-2">
-                      <button className="underline text-blue-900">Edit</button>
-                      <button onClick={()=> onDeleteAddress(address?.id)} className="underline text-blue-900">
+                    <p className="text-gray-600 dark:text-gray-400">{address?.zipCode}</p>
+                    
+                    <div className="flex gap-3 mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                      <button className="flex items-center text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 text-sm">
+                        <FaEdit className="w-3 h-3 mr-1" />
+                        Edit
+                      </button>
+                      <button 
+                        onClick={() => onDeleteAddress(address?.id)}
+                        className="flex items-center text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 text-sm"
+                      >
+                        <FaTrash className="w-3 h-3 mr-1" />
                         Remove
                       </button>
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-10 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
+                <p className="text-gray-500 dark:text-gray-400">No addresses saved yet</p>
+                <button 
+                  onClick={() => setAddAddress(true)}
+                  className="mt-3 text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300"
+                >
+                  Add your first address
+                </button>
+              </div>
+            )}
           </div>
         </div>
+      ) : (
+        <AddAddress onCancel={() => setAddAddress(false)} />
       )}
-      {addAddress && <AddAddress onCancel={()=> setAddAddress(false)}/>}
     </div>
   );
 };

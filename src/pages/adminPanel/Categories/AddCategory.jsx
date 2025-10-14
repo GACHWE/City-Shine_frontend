@@ -8,6 +8,7 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
   const [categoryData, setCategoryData] = useState({
     name: "",
     code: "",
+    categoryTypes: "",
     description: "",
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +36,7 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
 
     const payload = {
       name: categoryData.name,
+      categoryTypes: categoryData.categoryTypes,
       code: categoryData.code,
       description: categoryData.description,
     };
@@ -59,7 +61,7 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
       }
 
       // Reset form and close modal after success
-      setCategoryData({ name: "", code: "", description: "" });
+      setCategoryData({ name: "", code: "",categoryTypes: "", description: "" });
       setTimeout(() => { // Give user time to see success message
         handleClose();
         setStatusMessage({ type: "", text: "" }); // Clear message for next open
@@ -98,7 +100,7 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
           </Dialog.Title>
 
           <Dialog.Description className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            Provide the category name, code, and description.
+            Provide the category name, code, type and description.
           </Dialog.Description>
 
           <form onSubmit={handleSubmit} className="mt-4">
@@ -140,6 +142,18 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
                 focus:outline-none
               "
               required
+            />
+             <input
+              id="category-type"
+              type="text"
+              placeholder="Category Type"
+              value={categoryData.categoryTypes}
+              onChange={handleChange}
+              className=" mt-4 block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-3 py-2  text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500
+                focus:border-blue-500 focus:ring-blue-500
+                focus:outline-none
+              "
+            
             />
             <textarea
               id="category-description"

@@ -6,7 +6,7 @@ import AddCategory from "./AddCategory";
 import EditCategory from "./EditCategory"; // Import the new component
 import Table from "../../../components/Table";
 import { categoriesColumns } from "../../../data/categoriesColumns";
-import axios from 'axios';
+import axios from "axios";
 import { API_BASE_URL, API_URLS, getHeaders } from "../../../api/constant";
 
 const ProductCategories = () => {
@@ -22,7 +22,10 @@ const ProductCategories = () => {
     setError(null);
     try {
       const config = { headers: getHeaders() };
-      const response = await axios.get(`${API_BASE_URL}${API_URLS.GET_CATEGORIES}`, config);
+      const response = await axios.get(
+        `${API_BASE_URL}${API_URLS.GET_CATEGORIES}`,
+        config
+      );
       setCategories(response.data);
     } catch (err) {
       console.error("Error fetching categories:", err);
@@ -55,12 +58,14 @@ const ProductCategories = () => {
   };
 
   const handleCategoryAdded = (newCategory) => {
-    setCategories(prev => [...prev, newCategory]);
+    setCategories((prev) => [...prev, newCategory]);
     // fetchCategories(); // Or you can refetch all categories
   };
 
   const handleCategoryUpdated = (updatedCategory) => {
-    setCategories(prev => prev.map(cat => cat.id === updatedCategory.id ? updatedCategory : cat));
+    setCategories((prev) =>
+      prev.map((cat) => (cat.id === updatedCategory.id ? updatedCategory : cat))
+    );
     // fetchCategories();
   };
 
@@ -69,12 +74,14 @@ const ProductCategories = () => {
     if (window.confirm("Are you sure you want to delete this category?")) {
       try {
         const config = { headers: getHeaders() };
-        await axios.delete(`${API_BASE_URL}${API_URLS.GET_CATEGORIES}/${categoryId}`, config);
-        
+        await axios.delete(
+          `${API_BASE_URL}${API_URLS.GET_CATEGORIES}/${categoryId}`,
+          config
+        );
+
         // Optimistically remove the category from the list
-        setCategories(prev => prev.filter(cat => cat.id !== categoryId));
+        setCategories((prev) => prev.filter((cat) => cat.id !== categoryId));
         console.log(`Category with ID ${categoryId} deleted successfully.`);
-        
       } catch (error) {
         console.error("Error deleting category:", error);
         window.alert("Failed to delete category. Please try again.");
@@ -117,7 +124,11 @@ const ProductCategories = () => {
         </button>
       </div>
 
-      <AddCategory open={isAddModalOpen} handleClose={handleAddModalClose} onCategoryAdded={handleCategoryAdded} />
+      <AddCategory
+        open={isAddModalOpen}
+        handleClose={handleAddModalClose}
+        onCategoryAdded={handleCategoryAdded}
+      />
 
       {/* New EditCategory Modal */}
       <EditCategory
@@ -126,20 +137,21 @@ const ProductCategories = () => {
         categoryToEdit={categoryToEdit}
         onCategoryUpdated={handleCategoryUpdated}
       />
-
-      <Table
-        data={categories}
-        // Pass the handlers to the columns function
-        fields={categoriesColumns(handleEditModalOpen, handleDeleteCategory)}
-        numberOfRows={10}
-        enableTopToolBar={true}
-        enableBottomToolBar={true}
-        enablePagination={true}
-        enableRowSelection={false}
-        enableColumnFilters={false}
-        enableEditing={true}
-        enableColumnDragging={true}
-      />
+      <div className="dark:text-white text-black">
+        <Table
+          data={categories}
+          // Pass the handlers to the columns function
+          fields={categoriesColumns(handleEditModalOpen, handleDeleteCategory)}
+          numberOfRows={10}
+          enableTopToolBar={true}
+          enableBottomToolBar={true}
+          enablePagination={true}
+          enableRowSelection={false}
+          enableColumnFilters={false}
+          enableEditing={true}
+          enableColumnDragging={true}
+        />
+      </div>
     </div>
   );
 };

@@ -5,7 +5,10 @@ import { loadCategories } from "../store/features/category";
 import { getAllCategories } from "../api/fetchCategories"; // This function now manages its own loading state
 import { Outlet } from "react-router-dom";
 import Navigation from "../components/Navigation/Navigation";
+import ScrollManager from "../components/Navigation/ScrollManager";
 import Spinner from "../components/Spinner/Spinner";
+import Footer from "../components/Footer/Footer";
+import BottomNav from "../components/Navigation/BottomNav";
 
 const ShopApplicationWrapper = () => {
   const dispatch = useDispatch();
@@ -30,9 +33,12 @@ const ShopApplicationWrapper = () => {
   }, [dispatch]);
 
   return (
-    <div>
-      <Navigation />
-      <main> {/* Use a main tag for semantic structure */}
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 sm:p-8">
+        <ScrollManager />
+        <Navigation />
+      
+      <main className=""> 
+      
         {commonError && ( // Display global error if set
             <div className="flex justify-center items-center py-4 text-red-500">
                 <p>{commonError}</p>
@@ -41,6 +47,12 @@ const ShopApplicationWrapper = () => {
         {globalLoading && !commonError && <Spinner />} {/* Show spinner only if loading and no error */}
         <Outlet />
       </main>
+      <BottomNav />
+      {/* Footer should be outside of Outlet to ensure it appears on all pages */}
+      {!globalLoading && !commonError && <Footer />} {/* Only show footer if not loading and no error */}
+      
+      {/* Optional: If you want to show the footer even when loading or error, you can remove the condition */}
+      {/* <Footer /> */}
     </div>
   );
 };

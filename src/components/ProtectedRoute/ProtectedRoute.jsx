@@ -1,21 +1,13 @@
-import React, { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { isUserAdmin } from '../../utils/jwt-helper'; // <-- IMPORT THE NEW FUNCTION
+import React from "react";
+import { Navigate } from "react-router-dom";
+import { isTokenValid } from "../../utils/jwt-helper";
 
-const ProtectedRoute = ({children}) => {
-    const navigate = useNavigate();
+const ProtectedRoute = ({ children }) => {
+  if (!isTokenValid()) {
+    return <Navigate to="/v1/login" replace />;
+  }
 
-    useEffect(()=>{
-        if(!isUserAdmin()){ // <-- USE THE NEW FUNCTION
-            navigate("/v1/login")
-        }
-    },[navigate]);
+  return <>{children}</>;
+};
 
-    return (
-        <div>
-            {children}
-        </div>
-    )
-}
-
-export default ProtectedRoute
+export default ProtectedRoute;

@@ -25,6 +25,7 @@ const EditCategory = ({
       setCategoryData({
         name: categoryToEdit.name,
         code: categoryToEdit.code,
+        categoryTypes: categoryToEdit.categoryTypes,
         description: categoryToEdit.description,
       });
     }
@@ -46,6 +47,7 @@ const EditCategory = ({
     const payload = {
       name: categoryData.name,
       code: categoryData.code,
+      categoryTypes: categoryData.categoryTypes,
       description: categoryData.description,
     };
 
@@ -156,6 +158,28 @@ const EditCategory = ({
               "
               required
             />
+             <div>Category Type</div>
+             <input
+              autoFocus
+              id="edit-category-type"
+              type="text"
+              placeholder="Category Type"
+              value={categoryData.categoryTypes}
+              onChange={handleChange}
+              className="
+                mt-2 block w-full 
+                rounded-md 
+                border border-gray-300 dark:border-gray-600
+                bg-gray-50 dark:bg-gray-700
+                px-3 py-2 
+                text-gray-900 dark:text-gray-200
+                placeholder-gray-400 dark:placeholder-gray-500
+                focus:border-blue-500 focus:ring-blue-500
+                focus:outline-none
+              "
+              
+            />
+
             <div>Category Description</div>
 
             <textarea

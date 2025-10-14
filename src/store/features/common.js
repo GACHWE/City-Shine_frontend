@@ -1,25 +1,60 @@
-// src/store/features/common.js
-import { createSlice } from "@reduxjs/toolkit"
+// store/features/common.js
+import { createSlice } from "@reduxjs/toolkit";
 
-export const initialState = {
-    loading: false,
-    error: null // <-- ADD THIS LINE: Initialize an error state
-}
-
-export const commonSlice = createSlice({
-    name:'commonSlice',
-    initialState,
-    reducers:{
-        setLoading : (state,action)=>{
-            // Redux Toolkit uses Immer, so direct mutation is fine and preferred for simplicity
-            state.loading = action.payload; // <-- SIMPLIFIED: Direct mutation
-        },
-        setError : (state,action)=>{ // <-- ADD THIS REDUCER: To set error messages
-            state.error = action.payload; // <-- Set the error message from action.payload
-        }
-    }
+const commonSlice = createSlice({
+  name: "common",
+  initialState: {
+    loading: false,
+    error: null,
+    toast: {
+      show: false,
+      message: "",
+      type: "info", // 'info', 'success', 'warning', 'error'
+      duration: 3000 // milliseconds
+    }
+  },
+  reducers: {
+    setLoading: (state, action) => {
+      state.loading = action.payload;
+    },
+    setError: (state, action) => {
+      state.error = action.payload;
+    },
+    showToast: (state, action) => {
+      state.toast = {
+        show: true,
+        message: action.payload.message,
+        type: action.payload.type || "info",
+        duration: action.payload.duration || 3000
+      };
+    },
+    hideToast: (state) => {
+      state.toast.show = false;
+    },
+    clearToast: (state) => {
+      state.toast = {
+        show: false,
+        message: "",
+        type: "info",
+        duration: 3000
+      };
+    }
+  }
 });
 
-// <-- IMPORTANT: Export both setLoading AND setError
-export const { setLoading, setError } = commonSlice?.actions;
-export default commonSlice?.reducer;
+// ✅ Export all actions
+export const { 
+  setLoading, 
+  setError, 
+  showToast, 
+  hideToast, 
+  clearToast 
+} = commonSlice.actions;
+
+// ✅ Selectors
+export const selectLoading = (state) => state.common.loading;
+export const selectError = (state) => state.common.error;
+export const selectToast = (state) => state.common.toast;
+
+// ✅ Reducer
+export default commonSlice.reducer;
