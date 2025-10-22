@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   flexRender,
@@ -6,10 +6,10 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   useReactTable,
+  getExpandedRowModel,
 } from "@tanstack/react-table";
-import { FiChevronLeft, FiChevronRight, FiPlus, FiSearch } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiSearch } from "react-icons/fi";
 
-// A small component to handle the global filter input
 function Filter({ column, table }) {
   const [value, setValue] = useState(column.getFilterValue() ?? "");
 
@@ -46,12 +46,19 @@ const Table = ({
   const [globalFilter, setGlobalFilter] = useState("");
   const [columnFilters, setColumnFilters] = useState([]);
   const [rowSelection, setRowSelection] = useState({});
+  const [expanded, setExpanded] = useState({});
+  // ✅ Safely handle fields
+  if (!Array.isArray(fields)) {
+    console.warn("⚠️ `fields` is not an array:", fields);
+  }
 
-  const columns = fields.map((field) => ({
-    ...field,
-    header: field.header,
-    accessorKey: field.accessorKey,
-  }));
+  const columns = Array.isArray(fields)
+    ? fields.map((field) => ({
+        ...field,
+        header: field.header,
+        accessorKey: field.accessorKey,
+      }))
+    : [];
 
   if (showPreview) {
     columns.push({
@@ -76,7 +83,7 @@ const Table = ({
           type="checkbox"
           checked={table.getIsAllPageRowsSelected()}
           onChange={table.getToggleAllPageRowsSelectedHandler()}
-          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+          className="w-4 h-4"
         />
       ),
       cell: ({ row }) => (
@@ -85,7 +92,7 @@ const Table = ({
           checked={row.getIsSelected()}
           disabled={!row.getCanSelect()}
           onChange={row.getToggleSelectedHandler()}
-          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+          className="w-4 h-4"
         />
       ),
     });
@@ -99,6 +106,7 @@ const Table = ({
       columnFilters,
       rowSelection,
     },
+    onExpandedChange: setExpanded,
     onGlobalFilterChange: setGlobalFilter,
     onColumnFiltersChange: setColumnFilters,
     onRowSelectionChange: setRowSelection,
@@ -108,7 +116,7 @@ const Table = ({
     getSortedRowModel: getCoreRowModel(),
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     table.setPageSize(numberOfRows);
   }, [numberOfRows, table]);
 
@@ -126,53 +134,93 @@ const Table = ({
             />
             <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-400" />
           </div>
-          {/* You can add more buttons here */}
         </div>
       )}
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-left table-auto">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th key={header.id} scope="col" className="px-6 py-3">
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    {enableColumnFilters && header.column.getCanFilter() && (
-                      <div className="mt-1">
-                        <Filter column={header.column} table={table} />
-                      </div>
-                    )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr
-                key={row.id}
-                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-              >
+      <table className="overflow-x-auto">
+        <thead className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <th
+                  key={header.id}
+                  className="px-6 py-3 text-left text-sm font-semibold"
+                >
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+
+        <tbody>
+          {table.getRowModel().rows.map((row) => (
+            <React.Fragment key={row.id}>
+              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="px-6 py-4">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+
+              {row.getIsExpanded() && (
+                <tr className="bg-gray-100 dark:bg-gray-900">
+                  <td
+                    colSpan={row.getVisibleCells().length}
+                    className="px-6 py-4"
+                  >
+                    {/* Customize this content based on your data */}
+                    <div className="text-sm text-gray-700 dark:text-gray-300 space-y-2">
+                      <div>
+                        <strong>Customer Name:</strong>{" "}
+                        {row.original.customerName || "N/A"}
+                      </div>
+                      <div>
+                        <strong>Address:</strong>{" "}
+                        {row.original.address
+                          ? `${row.original.address.street}, ${row.original.address.city}, ${row.original.address.state}, ${row.original.address.zipCode}`
+                          : "N/A"}
+                      </div>
+                      <div>
+                        <strong>Phone:</strong>{" "}
+                        {row.original.address?.phoneNumber || "N/A"}
+                      </div>
+                      <div>
+                        <strong>Items:</strong>
+                        <ul className="list-disc list-inside">
+                          {row.original.orderItems.map((item, index) => (
+                            <li key={index}>
+                              {item.productName} (Qty: {item.quantity}) - $
+                              {item.itemPrice?.toFixed(2)}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      {row.original.expectedDeliveryDate && (
+                        <div>
+                          <strong>Expected Delivery:</strong>{" "}
+                          {new Date(
+                            row.original.expectedDeliveryDate
+                          ).toLocaleDateString()}
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </React.Fragment>
+          ))}
+        </tbody>
+      </table>
 
       {enableBottomToolBar && enablePagination && (
         <div className="flex items-center justify-between p-4 mt-4">
-          {/* Pagination Info */}
           <span className="text-sm text-gray-700 dark:text-gray-400">
             Page{" "}
             <span className="font-semibold text-gray-900 dark:text-white">
@@ -184,7 +232,6 @@ const Table = ({
             </span>
           </span>
 
-          {/* Pagination Buttons */}
           <div className="flex items-center space-x-2">
             <button
               onClick={() => table.previousPage()}

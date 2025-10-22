@@ -6,7 +6,10 @@ export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   server: {
     port: 3000,
-    open: true
+    open: true,
+    allowedHosts:[
+      '88c11b21a2f7.ngrok-free.app',
+    ]
   },
   build: {
     outDir: 'dist',

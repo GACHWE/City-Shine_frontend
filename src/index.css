@@ -36,3 +36,10 @@ body {
   font-weight: 700;
   src: url(assets/fonts/Inter-Bold.ttf);
 }
+
+@layer components {
+    .search-bar {
+        @apply  w-[300px] transition-all duration-300 rounded-full  group-hover:border group-hover:border-gray-500
+        px-3 py-1 focus:outline-none dark:border-gray-100 dark:bg-gray-700 group-hover:dark:bg-gray-800;
+    }
+} 

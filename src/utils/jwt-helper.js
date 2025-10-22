@@ -13,9 +13,9 @@ export const saveToken = (token) => {
 };
 
 export const logOut = () => {
-    localStorage.removeItem('authToken');
+  localStorage.removeItem('authToken');
+  window.location.href = "/v1/login"; // Updated from "/login"
 };
-
 export const isTokenValid = () => {
     const token = getAuthToken();
     if (!token) return false;

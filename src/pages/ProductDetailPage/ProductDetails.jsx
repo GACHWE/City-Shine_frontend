@@ -1,167 +1,227 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Link, useLoaderData, useParams } from 'react-router-dom';
-import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
-import Rating from '../../components/Rating/Rating';
-import SizeFilter from '../../components/Filters/SizeFilter';
-import ProductColors from './ProductColors'; // Assuming this component exists
-import SvgCreditCard from '../../components/common/SvgCreditCard';
-import SvgCloth from '../../components/common/SvgCloth';
-import SvgShipping from '../../components/common/SvgShipping';
-import SvgReturn from '../../components/common/SvgReturn';
-import SectionHeading from '../../components/Sections/SectionsHeading/SectionHeading'; // Path might need adjustment for SectionsHeading
-import ProductCard from '../ProductListPage/ProductCard'; // Ensure this path is correct
-import { useDispatch, useSelector } from 'react-redux';
-import _ from 'lodash'; // Lodash is used here
-import { getAllProducts } from '../../api/fetchProducts'; // Make sure this function is defined and correctly fetches products
-import { addItemToCartAction } from '../../store/actions/cartAction';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useLoaderData } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import _ from "lodash";
+
+import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
+import Rating from "../../components/Rating/Rating";
+import ProductColors from "./ProductColors";
+import SvgCloth from "../../components/common/SvgCloth";
+import SvgReturn from "../../components/common/SvgReturn";
+import ProductCard from "../ProductListPage/ProductCard";
+
+import { fetchProducts } from "../../api/fetchProducts";
+import { addItemToCartAction } from "../../store/actions/cartAction";
+import Carousel from "../../components/common/Carousel";
+import { AiOutlineWhatsApp } from "react-icons/ai";
+import {
+  FiShoppingCart,
+  FiChevronLeft,
+  FiChevronRight,
+  FiShare2,
+  FiHeart,
+} from "react-icons/fi";
+import { TbTruckDelivery } from "react-icons/tb";
+import { IoShieldCheckmarkOutline } from "react-icons/io5";
 
 const extraSections = [
   {
-    icon: <SvgCreditCard />,
-    label: 'Secure payment'
+    icon: <IoShieldCheckmarkOutline className="text-lg" />,
+    label: "Secure payment",
+    description: "Your payment information is protected",
   },
   {
     icon: <SvgCloth />,
-    label: 'Size & Fit'
+    label: "Size & Fit",
+    description: "Perfect fit guaranteed",
   },
   {
-    icon: <SvgShipping />,
-    label: 'Free shipping'
+    icon: <TbTruckDelivery className="text-lg" />,
+    label: "Free shipping",
+    description: "On orders over Ksh 2,000",
   },
   {
     icon: <SvgReturn />,
-    label: 'Free Shipping & Returns'
-  }
+    label: "Free Returns",
+    description: "30-day return policy",
+  },
 ];
 
 const ProductDetails = () => {
-  const { product } = useLoaderData(); 
-  const [currentDisplayImage, setCurrentDisplayImage] = useState(''); 
-  const [breadCrumbLinks, setBreadCrumbLink] = useState([]);
+  const { product } = useLoaderData();
   const dispatch = useDispatch();
-  const cartItems = useSelector((state) => state.cartState?.cart); 
-  const [similarProducts, setSimilarProducts] = useState([]); 
   const categories = useSelector((state) => state?.categoryState?.categories);
-  const [selectedSize, setSelectedSize] = useState(''); 
-  const [error, setError] = useState('');
-  const [loadingSimilar, setLoadingSimilar] = useState(true); 
-  const [similarError, setSimilarError] = useState(null); 
-  // Determine the product's category
+
+  const [currentDisplayImage, setCurrentDisplayImage] = useState("");
+  const [breadCrumbLinks, setBreadCrumbLinks] = useState([]);
+  const [similarProducts, setSimilarProducts] = useState([]);
+  const [selectedColor, setSelectedColor] = useState("");
+  const [error, setError] = useState("");
+  const [loadingSimilar, setLoadingSimilar] = useState(true);
+  const [similarError, setSimilarError] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isMobileGalleryExpanded, setIsMobileGalleryExpanded] = useState(false);
+  const [isSticky, setIsSticky] = useState(false);
+
   const productCategory = useMemo(() => {
     return categories?.find((category) => category?.id === product?.categoryId);
   }, [product, categories]);
 
-  // Fetch similar products
-  useEffect(() => {
-    if (!product?.categoryId) return; // Ensure categoryId exists before fetching
+  const shopNumber = "254739299636";
+  const productUrl = window.location.origin + "/product/" + product.slug;
 
+  const message = `Hello, I'd like more details about ${product.name}. Here's the link: ${productUrl}`;
+  const whatsappLink = `https://wa.me/${shopNumber}?text=${encodeURIComponent(
+    message
+  )}`;
+
+  useEffect(() => {
+    if (!product?.categoryId) return;
     setLoadingSimilar(true);
-    setSimilarError(null); // Clear previous errors
-    // Assuming getAllProducts can take categoryId and categoryTypeId as filters
-    getAllProducts(product.categoryId, product.categoryTypeId)
-      .then(res => {
-        const filteredSimilarProducts = res?.filter((item) => item?.id !== product?.id);
-        setSimilarProducts(filteredSimilarProducts);
+    setSimilarError(null);
+
+    fetchProducts({
+      categoryId: product.categoryId,
+      typeId: product.categoryTypeId,
+    })
+      .then((res) => {
+        const filtered = res?.filter((item) => item?.id !== product?.id);
+        setSimilarProducts(filtered);
       })
       .catch((err) => {
-        console.error('Failed to fetch similar products:', err);
-        setSimilarError('Failed to load similar products. Please try again.');
-        setSimilarProducts([]); 
+        console.error("Error fetching similar products:", err);
+        setSimilarError("Failed to load similar products.");
       })
-      .finally(() => {
-        setLoadingSimilar(false);
-      });
+      .finally(() => setLoadingSimilar(false));
   }, [product?.categoryId, product?.categoryTypeId, product?.id]);
 
-  
   useEffect(() => {
-   
-    const primaryImage = product?.productResources?.find(res => res.isPrimary)?.url;
+    const primaryImage = product?.productResources?.find(
+      (res) => res.isPrimary
+    )?.url;
     const fallbackImage = product?.productResources?.[0]?.url;
-    setCurrentDisplayImage(primaryImage || fallbackImage || ''); // Ensure a default empty string if no images
+    setCurrentDisplayImage(primaryImage || fallbackImage || "");
 
-    // Build breadcrumb links
-    const newBreadcrumbLinks = [{ title: 'Shop', path: '/shop' }]; // Changed path to /shop, adjust as needed
+    if (product?.productResources?.length) {
+      const primaryIndex = product.productResources.findIndex(
+        (res) => res.isPrimary
+      );
+      setCurrentImageIndex(primaryIndex >= 0 ? primaryIndex : 0);
+    }
 
+    const links = [{ title: "Shop", path: "/shop" }];
     if (productCategory) {
-      newBreadcrumbLinks.push({
+      links.push({
         title: productCategory.name,
-        path: `/category/${productCategory.code}` // Assuming category path uses code/slug
+        path: `/category/${productCategory.code}`,
       });
     }
 
-    const productType = productCategory?.categoryTypes?.find((item) => item?.id === product?.categoryTypeId);
+    const productType = productCategory?.categoryTypes?.find(
+      (item) => item?.id === product?.categoryTypeId
+    );
     if (productType) {
-      newBreadcrumbLinks.push({
+      links.push({
         title: productType.name,
-        path: `/category/${productCategory.code}/${productType.code}` // Assuming category type path uses code/slug
+        path: `/category/${productCategory.code}/${productType.code}`,
       });
     }
 
-    newBreadcrumbLinks.push({
-      title: product?.name,
-      path: `/product/${product?.slug}` // Or product?.slug if your route uses slugs
-    });
+    links.push({ title: product?.name, path: `/product/${product?.slug}` });
+    setBreadCrumbLinks(links);
 
-    setBreadCrumbLink(newBreadcrumbLinks);
-  }, [productCategory, product]); // Depend on productCategory and product
-
-  // Add item to cart handler
-  const addItemToCart = useCallback(() => {
-    if (!selectedSize) {
-      setError('Please select a size');
-      return; 
-    } else {
-      setError(''); 
+    if (product?.variants?.length) {
+      setSelectedColor(product.variants[0].color);
     }
+  }, [productCategory, product]);
 
-    const selectedVariant = product?.variants?.find((variant) => variant?.size === selectedSize);
+  // Sticky sidebar effect
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      setIsSticky(scrollTop > 200);
+    };
 
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const selectedVariant = useMemo(() => {
+    if (!product?.variants || !selectedColor) return null;
+    return product.variants.find((variant) => variant.color === selectedColor);
+  }, [product, selectedColor]);
+
+  const addItemToCart = useCallback(() => {
+    setError("");
     if (!selectedVariant) {
-      setError('Selected size variant not found.');
+      setError("Please select a color.");
       return;
     }
 
     if (selectedVariant.stockQuantity > 0) {
-      // Get the thumbnail URL for the cart item
-      const cartThumbnail = product?.productResources?.find(res => res.isPrimary)?.url ||
-                           product?.productResources?.[0]?.url;
+      const cartThumbnail =
+        product?.productResources?.find((res) => res.isPrimary)?.url ||
+        product?.productResources?.[0]?.url;
 
-      dispatch(addItemToCartAction({
-        productId: product.id,
-        thumbnail: cartThumbnail, 
-        name: product.name,
-        variant: selectedVariant, 
-        quantity: 1, 
-        subTotal: product.price, 
-        price: product.price,
-      }));
-      console.log("Added to cart:", { product, selectedSize, selectedVariant });
-      
+      dispatch(
+        addItemToCartAction({
+          productId: product.id,
+          thumbnail: cartThumbnail,
+          name: product.name,
+          variantId: selectedVariant.id,
+          variantName: `${selectedColor}`,
+          quantity: 1,
+          subTotal: selectedVariant.price,
+          price: selectedVariant.price,
+        })
+      );
     } else {
-      setError('Out of Stock for the selected size.');
+      setError("Selected variant is out of stock.");
     }
-  }, [dispatch, product, selectedSize]); // Dependencies for useCallback
+  }, [dispatch, product, selectedVariant, selectedColor]);
 
-  // Clear error when size changes
   useEffect(() => {
-    if (selectedSize) {
-      setError('');
+    if (selectedColor) setError("");
+  }, [selectedColor]);
+
+  const colors = useMemo(
+    () => _.uniq(_.map(product?.variants, "color")),
+    [product]
+  );
+  const isAddToCartDisabled =
+    !selectedVariant || selectedVariant.stockQuantity <= 0;
+
+  const navigateImage = (direction) => {
+    if (!product?.productResources?.length) return;
+
+    const newIndex =
+      direction === "next"
+        ? (currentImageIndex + 1) % product.productResources.length
+        : (currentImageIndex - 1 + product.productResources.length) %
+          product.productResources.length;
+
+    setCurrentImageIndex(newIndex);
+    setCurrentDisplayImage(product.productResources[newIndex].url);
+  };
+
+  const shareProduct = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: product.name,
+          text: product.description,
+          url: window.location.href,
+        });
+      } catch (err) {
+        console.log("Error sharing:", err);
+      }
+    } else {
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(window.location.href);
+      alert("Product link copied to clipboard!");
     }
-  }, [selectedSize]);
+  };
 
-  // Extract colors and sizes from variants using useMemo
-  const colors = useMemo(() => {
-    const colorSet = _.uniq(_.map(product?.variants, 'color'));
-    return colorSet;
-  }, [product]);
-
-  const sizes = useMemo(() => {
-    const sizeSet = _.uniq(_.map(product?.variants, 'size'));
-    return sizeSet;
-  }, [product]);
-
-  // Handle case where product data might not be available (e.g., if useLoaderData returns null for some reason)
   if (!product) {
     return (
       <div className="flex justify-center items-center h-screen text-gray-500">
@@ -171,135 +231,354 @@ const ProductDetails = () => {
   }
 
   return (
-    <>
-      <div className='flex flex-col md:flex-row px-10 py-8'> {/* Added py-8 for overall spacing */}
-        <div className='w-full lg:w-[50%] md:w-[40%]'>
-          {/* Main Product Image and Thumbnails */}
-          <div className='flex flex-col md:flex-row'>
-            {/* Thumbnail Gallery (left/top) */}
-            <div className='w-full md:w-[20%] flex justify-center items-start md:h-[420px]'>
-              <div className='flex flex-row md:flex-col justify-center items-center h-full gap-2'>
-                {
-                  product?.productResources?.map((item, index) => (
+    <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Breadcrumb */}
+        <div className="py-4 border-b border-gray-200 dark:border-gray-800">
+          <Breadcrumb links={breadCrumbLinks} />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 py-8">
+          {/* Image Gallery - Left Column */}
+          <div className="lg:col-span-7">
+            <div className="flex flex-col lg:flex-row gap-6">
+              {/* Thumbnails - Vertical on desktop */}
+              <div className="hidden lg:flex flex-col gap-4 overflow-y-auto max-h-[600px]">
+                {product?.productResources?.map((item, index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setCurrentDisplayImage(item?.url);
+                      setCurrentImageIndex(index);
+                    }}
+                    className={`rounded-lg p-1 transition-all duration-200 ${
+                      currentDisplayImage === item?.url
+                        ? "border-2 border-blue-500 shadow-lg scale-105"
+                        : "border border-gray-200 hover:border-blue-300 hover:shadow-md"
+                    }`}
+                  >
+                    <img
+                      src={item?.url}
+                      alt={`thumbnail-${index}`}
+                      className="h-20 w-20 object-cover rounded-lg"
+                    />
+                  </button>
+                ))}
+              </div>
+
+              {/* Main Image Area */}
+              <div className="flex-1">
+                <div className="relative bg-gray-50 dark:bg-gray-800 rounded-2xl p-4 lg:p-8">
+                  {/* Navigation Arrows */}
+                  {product?.productResources?.length > 1 && (
+                    <>
+                      <button
+                        onClick={() => navigateImage("prev")}
+                        className="absolute left-2 lg:left-4 top-1/2 transform -translate-y-1/2 bg-white/90 dark:bg-gray-700/90 rounded-full p-3 shadow-lg z-10 hover:bg-white dark:hover:bg-gray-600 transition-all duration-200 lg:hidden"
+                        aria-label="Previous image"
+                      >
+                        <FiChevronLeft className="text-xl" />
+                      </button>
+                      <button
+                        onClick={() => navigateImage("next")}
+                        className="absolute right-2 lg:right-4 top-1/2 transform -translate-y-1/2 bg-white/90 dark:bg-gray-700/90 rounded-full p-3 shadow-lg z-10 hover:bg-white dark:hover:bg-gray-600 transition-all duration-200 lg:hidden"
+                        aria-label="Next image"
+                      >
+                        <FiChevronRight className="text-xl" />
+                      </button>
+                    </>
+                  )}
+
+                  {/* Image Counter */}
+                  {product?.productResources?.length > 1 && (
+                    <div className="absolute top-4 right-4 bg-black/70 text-white text-sm px-3 py-1 rounded-full z-10">
+                      {currentImageIndex + 1} /{" "}
+                      {product.productResources.length}
+                    </div>
+                  )}
+
+                  {/* Main Image */}
+                  <div className="flex items-center justify-center min-h-[400px] lg:min-h-[500px]">
+                    <img
+                      src={currentDisplayImage}
+                      alt={product?.name}
+                      className="max-w-full max-h-[500px] object-contain rounded-lg"
+                    />
+                  </div>
+
+                  {/* Mobile Gallery Expand Button */}
+                  {product?.productResources?.length > 1 && (
                     <button
-                      key={item?.url || index} // Use item.url as key if unique, otherwise index
-                      onClick={() => setCurrentDisplayImage(item?.url)}
-                      className={`rounded-lg w-fit p-1 ${currentDisplayImage === item?.url ? 'border-2 border-blue-500' : 'border border-transparent'} hover:border-blue-500 transition-all`}
+                      onClick={() => setIsMobileGalleryExpanded(true)}
+                      className="mt-4 text-blue-600 dark:text-blue-400 font-medium flex items-center justify-center w-full lg:hidden text-sm"
                     >
-                      <img src={item?.url} className='h-[60px] w-[60px] rounded-lg object-cover' alt={`${product?.name} thumbnail ${index + 1}`} />
+                      View all images ({product.productResources.length})
                     </button>
-                  ))
-                }
+                  )}
+                </div>
               </div>
             </div>
-            {/* Large Display Image */}
-            <div className='w-full md:w-[80%] flex justify-center md:pt-0 pt-10'>
-              <img
-                src={currentDisplayImage} // Display selected image
-                className='h-full w-full max-h-[520px] border rounded-lg object-contain' // Changed object-cover to object-contain to prevent cropping
-                alt={product?.name}
-              />
+          </div>
+
+          {/* Product Details - Right Column */}
+          <div
+            className={`lg:col-span-5 ${
+              isSticky ? "lg:sticky lg:top-24 lg:self-start" : ""
+            }`}
+          >
+            <div className="space-y-6">
+              {/* Header Section */}
+              <div className="space-y-4">
+                <div className="flex items-start justify-between">
+                  <h1 className="text-2xl lg:text-3xl font-bold leading-tight pr-4">
+                    {product?.name}
+                  </h1>
+                  <button
+                    onClick={shareProduct}
+                    className="flex-shrink-0 p-2 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
+                    aria-label="Share product"
+                  >
+                    <FiShare2 className="text-xl" />
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <Rating rating={product?.rating} showCount={true} />
+                  <div className="text-right">
+                    <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                      {product?.price != null
+                        ? `Ksh ${product.price.toLocaleString()}`
+                        : "Price not available"}
+                    </p>
+                    {product?.originalPrice &&
+                      product.originalPrice > product.price && (
+                        <p className="text-sm text-gray-500 line-through">
+                          Ksh {product.originalPrice.toLocaleString()}
+                        </p>
+                      )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div className="prose prose-gray dark:prose-invert max-w-none">
+                <ul className="text-gray-600 dark:text-gray-300 leading-relaxed list-disc list-inside space-y-1">
+                  {product?.description?.split("\n").map((point, index) => (
+                    <li key={index}>{point.trim()}</li>
+                  ))}
+                </ul>
+              </div>
+              {/* Key Features Grid */}
+              <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                <div className="text-center">
+                  <p className="font-semibold text-sm text-gray-600 dark:text-gray-400">
+                    Condition
+                  </p>
+                  <p className="text-lg font-bold text-gray-900 dark:text-white">
+                    {product.variants.conditionStatus}
+                  </p>
+                </div>
+                <div className="text-center">
+                  <p className="font-semibold text-sm text-gray-600 dark:text-gray-400">
+                    Availability
+                  </p>
+                  <p
+                    className={`text-lg font-bold ${
+                      selectedVariant?.stockQuantity > 0
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
+                    {selectedVariant?.stockQuantity > 0
+                      ? `${selectedVariant.stockQuantity} in stock`
+                      : "Out of stock"}
+                  </p>
+                </div>
+              </div>
+
+              {/* Color Selection */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="font-semibold text-lg">Select Color</p>
+                  {selectedColor && (
+                    <p className="text-sm text-gray-500">
+                      Selected: {selectedColor}
+                    </p>
+                  )}
+                </div>
+                {colors.length > 0 ? (
+                  <ProductColors
+                    colors={colors}
+                    selectedColor={selectedColor}
+                    onColorSelect={setSelectedColor}
+                  />
+                ) : (
+                  <p className="text-sm text-gray-500">No colors available</p>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={addItemToCart}
+                    disabled={isAddToCartDisabled}
+                    className={`flex items-center justify-center gap-3 rounded-xl px-8 py-4 font-semibold text-lg transition-all duration-300 shadow-lg flex-1 ${
+                      isAddToCartDisabled
+                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        : "bg-blue-600 hover:bg-blue-700 text-white hover:shadow-xl hover:scale-105"
+                    }`}
+                  >
+                    <FiShoppingCart className="text-xl" />
+                    {isAddToCartDisabled ? "Out of Stock" : "Add to Cart"}
+                  </button>
+
+                  <a
+                    href={whatsappLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-3 bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-4 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 flex-1"
+                  >
+                    <AiOutlineWhatsApp className="text-2xl" />
+                    <span>Chat on WhatsApp</span>
+                  </a>
+                </div>
+
+                {error && (
+                  <p className="text-red-600 dark:text-red-400 text-sm text-center bg-red-50 dark:bg-red-900/20 py-2 rounded-lg">
+                    {error}
+                  </p>
+                )}
+
+                {/* Trust Badges */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  {extraSections.map((section, idx) => (
+                    <div key={idx} className="text-center space-y-2 p-2">
+                      <div className="text-blue-600 dark:text-blue-400 mx-auto text-2xl">
+                        {section.icon}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-xs">{section.label}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {section.description}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Product Description and Actions */}
-        <div className='w-full md:w-[60%] px-4 md:px-10 mt-8 md:mt-0'> {/* Adjusted padding/margins */}
-          <Breadcrumb links={breadCrumbLinks} />
-          <h1 className='text-4xl font-bold pt-4 text-gray-900 dark:text-gray-100'>{product?.name}</h1>
-          <Rating rating={product?.rating} />
-          <p className='text-3xl font-bold py-2 text-blue-600 dark:text-blue-400'>${product?.price?.toFixed(2)}</p> {/* Format price */}
-          
-          {/* Size Selection */}
-          <div className='flex flex-col py-2'>
-            <div className='flex gap-2 items-center'> {/* Added items-center for vertical alignment */}
-              <p className='text-base font-semibold text-gray-800 dark:text-gray-200'>Select Size:</p>
-              <Link className='text-sm text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition-colors' to={'https://en.wikipedia.org/wiki/Clothing_sizes'} target='_blank'>Size Guide &rarr;</Link>
-            </div>
-          </div>
-          <div className='mt-2'>
-            {sizes.length > 0 ? (
-              <SizeFilter
-                onChange={(values) => { setSelectedSize(values?.[0] ?? ''); }}
-                sizes={sizes}
-                hidleTitle={true} 
-                multi={false}
-              />
-            ) : (
-              <p className="text-sm text-gray-500 dark:text-gray-400">No size options available.</p>
-            )}
-          </div>
-          
-          {/* Colors Available */}
-          <div className='mt-4'>
-            <p className='text-base font-semibold text-gray-800 dark:text-gray-200 mb-2'>Colors Available:</p>
-            {colors.length > 0 ? (
-                <ProductColors colors={colors} />
-            ) : (
-                <p className="text-sm text-gray-500 dark:text-gray-400">No color options available.</p>
-            )}
+        {/* Similar Products Section */}
+        <div className="mt-16 border-t border-gray-200 dark:border-gray-800 pt-12">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl lg:text-3xl font-bold mb-2">
+              You Might Also Like
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400">
+              Discover similar products that match your style
+            </p>
           </div>
 
-          {/* Add to Cart Button */}
-          <div className='flex py-4'>
+          {loadingSimilar ? (
+            <div className="flex justify-center py-10">
+              <div className="animate-pulse text-gray-500">
+                Loading similar products...
+              </div>
+            </div>
+          ) : similarError ? (
+            <div className="text-center py-10 text-red-500">{similarError}</div>
+          ) : similarProducts.length > 0 ? (
+            <Carousel
+              items={similarProducts}
+              renderItem={(product) => (
+                <div
+                  key={product?.id}
+                  className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 mx-2 hover:scale-105"
+                >
+                  <ProductCard product={product} />
+                </div>
+              )}
+            />
+          ) : (
+            <div className="text-center py-10 text-gray-500">
+              No similar products found.
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Mobile Gallery Modal */}
+      {isMobileGalleryExpanded && (
+        <div className="fixed inset-0 bg-black/95 z-50 flex flex-col items-center justify-center p-4 lg:hidden">
+          <div className="absolute top-4 right-4 z-10">
             <button
-              onClick={addItemToCart}
-              className='bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center h-[48px] w-[180px] font-semibold text-lg' // Improved button styling
+              onClick={() => setIsMobileGalleryExpanded(false)}
+              className="text-white text-2xl p-2 bg-black/50 rounded-full"
+              aria-label="Close gallery"
             >
-              <svg width="20" height="20" className='mr-2' viewBox="0 0 17 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"> {/* Changed fill to currentColor */}
-                <path d="M1.5 1.33325H2.00526C2.85578 1.33325 3.56986 1.97367 3.6621 2.81917L4.3379 9.014C4.43014 9.8595 5.14422 10.4999 5.99474 10.4999H13.205C13.9669 10.4999 14.6317 9.98332 14.82 9.2451L15.9699 4.73584C16.2387 3.68204 15.4425 2.65733 14.355 2.65733H4.5M4.52063 13.5207H5.14563M4.52063 14.1457H5.14563M13.6873 13.5207H14.3123M13.6873 14.1457H14.3123M5.66667 13.8333C5.66667 14.2935 5.29357 14.6666 4.83333 14.6666C4.37310 14.6666 4 14.2935 4 13.8333C4 13.373 4.37310 12.9999 4.83333 12.9999C5.29357 12.9999 5.66667 13.373 5.66667 13.8333ZM14.8333 13.8333C14.8333 14.2935 14.4602 14.6666 14 14.6666C13.5398 14.6666 13.1667 14.2935 13.1667 13.8333C13.1667 13.373 13.5398 12.9999 14 12.9999C14.4602 12.9999 14.8333 13.373 14.8333 13.8333Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
-              Add to cart
+              &times;
             </button>
           </div>
-          {error && <p className='text-lg text-red-600 mt-2'>{error}</p>}
 
-          {/* Extra Sections (Secure Payment, etc.) */}
-          <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4'> {/* Use sm:grid-cols-2 for responsiveness */}
-            {
-              extraSections?.map((section, index) => (
-                <div key={index} className='flex items-center text-gray-700 dark:text-gray-300'>
-                  {section?.icon}
-                  <p className='px-2'>{section?.label}</p>
+          <div className="relative w-full h-4/5 flex items-center justify-center">
+            <img
+              src={currentDisplayImage}
+              alt={product?.name}
+              className="max-w-full max-h-full object-contain"
+            />
+
+            {product?.productResources?.length > 1 && (
+              <>
+                <button
+                  onClick={() => navigateImage("prev")}
+                  className="absolute left-2 bg-white/20 rounded-full p-3 text-white hover:bg-white/30 transition-colors"
+                  aria-label="Previous image"
+                >
+                  <FiChevronLeft className="text-xl" />
+                </button>
+                <button
+                  onClick={() => navigateImage("next")}
+                  className="absolute right-2 bg-white/20 rounded-full p-3 text-white hover:bg-white/30 transition-colors"
+                  aria-label="Next image"
+                >
+                  <FiChevronRight className="text-xl" />
+                </button>
+
+                <div className="absolute bottom-4 bg-black/70 text-white text-sm px-4 py-2 rounded-full">
+                  {currentImageIndex + 1} / {product.productResources.length}
                 </div>
-              ))
-            }
+              </>
+            )}
           </div>
-        </div>
-      </div>
 
-      {/* Product Description */}
-      <SectionHeading title={'Product Description'} />
-      <div className='md:w-[80%] w-full p-2 mx-auto'> {/* Centered and wider */}
-        <p className='px-8 text-gray-700 dark:text-gray-300 leading-relaxed'>{product?.description}</p>
-      </div>
-
-      {/* Similar Products */}
-      <SectionHeading title={'Similar Products'} />
-      <div className='px-10 pb-10'>
-        {loadingSimilar ? (
-          <div className="text-center py-8">
-            <p className="text-gray-600 dark:text-gray-400">Loading similar products...</p>
-            {/* You can add a Spinner component here as well */}
-          </div>
-        ) : similarError ? (
-          <div className="text-center py-8 text-red-500">
-            <p>{similarError}</p>
-          </div>
-        ) : similarProducts?.length ? (
-          <div className='pt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-2'>
-            {similarProducts.map((item) => (
-              <ProductCard
-                key={item?.id} // Use item.id as the key
-                product={item} // Pass the entire item as the 'product' prop
-              />
+          <div className="mt-4 flex gap-3 overflow-x-auto py-2 w-full px-4">
+            {product?.productResources?.map((item, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  setCurrentDisplayImage(item?.url);
+                  setCurrentImageIndex(index);
+                }}
+                className={`flex-shrink-0 rounded-lg p-1 transition-all ${
+                  currentDisplayImage === item?.url
+                    ? "border-2 border-blue-500 shadow-lg"
+                    : "border border-gray-400 opacity-70 hover:opacity-100"
+                }`}
+              >
+                <img
+                  src={item?.url}
+                  alt={`thumbnail-${index}`}
+                  className="h-16 w-16 object-cover rounded-lg"
+                />
+              </button>
             ))}
           </div>
-        ) : (
-          <p className="text-center py-8 text-gray-500 dark:text-gray-400">No similar products found.</p>
-        )}
-      </div>
-    </>
+        </div>
+      )}
+    </div>
   );
 };
 

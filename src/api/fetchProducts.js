@@ -117,15 +117,14 @@
 
 // src/api/fetchProducts.js
 
+// src/api/fetchProducts.js
 import axios from "axios";
 import { API_BASE_URL, API_URLS } from "./constant";
 
-// This function retrieves the token from localStorage
 const getAuthToken = () => {
     return localStorage.getItem("authToken");
 };
 
-// A helper function to create headers, which only includes the Authorization header if a token exists.
 const createAuthHeaders = () => {
     const token = getAuthToken();
     if (token) {
@@ -135,28 +134,40 @@ const createAuthHeaders = () => {
             },
         };
     }
-    return {}; // Return an empty object if no token is found
+    return {};
 };
 
-export const getAllProducts = async (id, typeId) => {
+// Enhanced fetchProducts with pagination support
+export const fetchProducts = async ({ 
+    categoryId, 
+    categoryCode, 
+    typeId, 
+    limit, 
+    page = 0, 
+    size = 20,
+    search 
+} = {}) => {
     let url = API_BASE_URL + API_URLS.GET_PRODUCTS;
     const params = new URLSearchParams();
 
-    if (id) {
-        params.append("categoryId", id);
-    }
-    if (typeId) {
-        params.append("typeId", typeId);
-    }
+    // Pagination parameters
+    if (page !== undefined) params.append("page", page);
+    if (size !== undefined) params.append("size", size);
+    
+    // Filter parameters
+    if (categoryId) params.append("categoryId", categoryId);
+    if (categoryCode) params.append("categoryCode", categoryCode);
+    if (typeId) params.append("typeId", typeId);
+    if (limit) params.append("limit", limit);
+    if (search) params.append("search", search);
 
     if (params.toString()) {
         url = url + `?` + params.toString();
     }
 
     try {
-        // Use the helper function to get headers
         const config = createAuthHeaders();
-        const result = await axios.get(url, config); // Use axios.get for clarity
+        const result = await axios.get(url, config);
         return result?.data;
     } catch (err) {
         console.error("Error fetching products:", err);
@@ -164,15 +175,52 @@ export const getAllProducts = async (id, typeId) => {
     }
 };
 
+// Get product count for pagination
+export const getProductCount = async ({ categoryId, typeId, search } = {}) => {
+    let url = API_BASE_URL + API_URLS.GET_PRODUCTS + "/count";
+    const params = new URLSearchParams();
+
+    if (categoryId) params.append("categoryId", categoryId);
+    if (typeId) params.append("typeId", typeId);
+    if (search) params.append("search", search);
+
+    if (params.toString()) {
+        url = url + `?` + params.toString();
+    }
+
+    try {
+        const config = createAuthHeaders();
+        const result = await axios.get(url, config);
+        return result?.data?.count || 0;
+    } catch (err) {
+        console.error("Error fetching product count:", err);
+        return 0;
+    }
+};
+
+// Get single product by slug (updated response structure)
 export const getProductBySlug = async (slug) => {
     const url = API_BASE_URL + API_URLS.GET_PRODUCTS + `?slug=${slug}`;
     try {
-        // Use the helper function to get headers
         const config = createAuthHeaders();
-        const result = await axios.get(url, config); // Use axios.get for clarity
-        return result?.data?.[0];
+        const result = await axios.get(url, config);
+        // Updated to match new response structure
+        return result?.data?.products?.[0] || result?.data?.[0];
     } catch (err) {
         console.error("Error fetching product by slug:", err);
+        throw err;
+    }
+};
+
+// Get product by ID
+export const getProductById = async (id) => {
+    const url = API_BASE_URL + API_URLS.GET_PRODUCTS + `/${id}`;
+    try {
+        const config = createAuthHeaders();
+        const result = await axios.get(url, config);
+        return result?.data;
+    } catch (err) {
+        console.error("Error fetching product by ID:", err);
         throw err;
     }
 };
