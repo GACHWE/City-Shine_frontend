@@ -5,7 +5,6 @@ import { IoMdSearch } from "react-icons/io";
 import { FiX } from "react-icons/fi";
 import { HiOutlineMenuAlt2 } from "react-icons/hi";
 import DarkMode from "../Darkmode/DarkMode";
-import { Wishlist } from "../common/Wishlist";
 import { AccountIcon } from "../common/AccountIcon";
 import { CartIcon } from "../common/CartIcon";
 import { getAllCategories } from "../../api/fetchCategories";
@@ -40,7 +39,7 @@ export default function Navigation() {
 
   return (
     <>
-    <div className="pb-4 sticky top-0 z-50">
+    <div className="pb-2 sticky top-0 z-50">
       {/* --- Top Nav --- */}
       <nav className="sticky top-0 z-50  bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">

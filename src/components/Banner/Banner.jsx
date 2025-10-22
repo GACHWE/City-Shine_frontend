@@ -66,10 +66,10 @@ const Banner = () => {
               initial="hidden"
               animate="visible"
               variants={textVariants}
-              className="flex flex-col justify-center gap-4 px-6 py-12 text-center sm:text-left order-2 sm:order-1"
+              className="flex flex-col justify-center gap-2 sm:gap-4 px-4 sm:px-6 py-6 sm:py-12 text-center sm:text-left order-2 sm:order-1"
             >
-              <h2 className="text-xl sm:text-3xl font-semibold text-gray-700">{data.subTitle}</h2>
-              <h1 className="text-3xl sm:text-5xl font-bold text-blue-900">{data.title}</h1>
+              <h2 className="text-lg sm:text-3xl font-semibold text-gray-700">{data.subTitle}</h2>
+              <h1 className="text-2xl sm:text-5xl font-bold text-blue-900">{data.title}</h1>
             </Motion.div>
 
             {/* Image right */}
@@ -77,12 +77,12 @@ const Banner = () => {
               initial="hidden"
               animate="visible"
               variants={imageVariants}
-              className="flex justify-center items-center order-1 sm:order-2"
+              className="flex justify-center items-center order-1 sm:order-2 py-4 sm:py-0"
             >
               <img
                 src={data.image}
                 alt={data.title}
-                className="w-[280px] sm:w-[400px] object-contain drop-shadow-xl"
+                className="w-[180px] sm:w-[400px] object-contain drop-shadow-xl"
               />
             </Motion.div>
           </div>
@@ -90,20 +90,20 @@ const Banner = () => {
 
       case "centered":
         return (
-          <div className={`${data.bg} flex flex-col justify-center items-center text-center rounded-3xl py-12`}>
+          <div className={`${data.bg} flex flex-col justify-center items-center text-center rounded-3xl py-8 sm:py-12`}>
             <Motion.img
               src={data.image}
               alt={data.title}
               initial="hidden"
               animate="visible"
               variants={imageVariants}
-              className="w-[250px] sm:w-[400px] object-contain drop-shadow-lg mb-6"
+              className="w-[150px] sm:w-[400px] object-contain drop-shadow-lg mb-4 sm:mb-6"
             />
             <Motion.h2
               initial="hidden"
               animate="visible"
               variants={textVariants}
-              className="text-lg sm:text-2xl text-gray-600"
+              className="text-base sm:text-2xl text-gray-600"
             >
               {data.subTitle}
             </Motion.h2>
@@ -111,7 +111,7 @@ const Banner = () => {
               initial="hidden"
               animate="visible"
               variants={textVariants}
-              className="text-3xl sm:text-5xl font-bold text-yellow-800"
+              className="text-2xl sm:text-5xl font-bold text-yellow-800"
             >
               {data.title}
             </Motion.h1>
@@ -126,12 +126,12 @@ const Banner = () => {
               initial="hidden"
               animate="visible"
               variants={imageVariants}
-              className="flex justify-center items-center order-1 sm:order-1"
+              className="flex justify-center items-center order-1 sm:order-1 py-4 sm:py-0"
             >
               <img
                 src={data.image}
                 alt={data.title}
-                className="w-[280px] sm:w-[400px] object-contain drop-shadow-xl"
+                className="w-[180px] sm:w-[400px] object-contain drop-shadow-xl"
               />
             </Motion.div>
 
@@ -140,10 +140,10 @@ const Banner = () => {
               initial="hidden"
               animate="visible"
               variants={textVariants}
-              className="flex flex-col justify-center gap-4 px-6 py-12 text-center sm:text-right order-2 sm:order-2"
+              className="flex flex-col justify-center gap-2 sm:gap-4 px-4 sm:px-6 py-6 sm:py-12 text-center sm:text-right order-2 sm:order-2"
             >
-              <h2 className="text-xl sm:text-3xl font-semibold text-gray-500">{data.subTitle}</h2>
-              <h1 className="text-3xl sm:text-5xl font-bold text-purple-900 dark:text-purple-500">{data.title}</h1>
+              <h2 className="text-lg sm:text-3xl font-semibold text-gray-500">{data.subTitle}</h2>
+              <h1 className="text-2xl sm:text-5xl font-bold text-purple-900 dark:text-purple-500">{data.title}</h1>
             </Motion.div>
           </div>
         );
@@ -155,7 +155,7 @@ const Banner = () => {
 
   return (
     <div className="container">
-      <div className="overflow-hidden rounded-3xl min-h-[500px] flex justify-center items-center relative z-10">
+      <div className="overflow-hidden rounded-3xl min-h-[300px] sm:min-h-[500px] flex justify-center items-center relative z-10">
         <div className="w-full">
           <Slider {...settings}>
             {products.map((data) => (

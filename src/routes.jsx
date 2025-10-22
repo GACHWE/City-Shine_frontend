@@ -133,7 +133,7 @@ import {
   // Suppliers,
   // Transactions,
   // Brands,
-} from "./pages/adminPanel";
+} from "./pages/AdminPanel";
 import PrivacyPolicy from "./pages/Policies/PrivacyPolicy";
 import TermsOfService from "./pages/Policies/TermsOfService";
 import ReturnPolicy from "./pages/Policies/ReturnPolicy";

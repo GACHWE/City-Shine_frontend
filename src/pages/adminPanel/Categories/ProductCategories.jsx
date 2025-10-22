@@ -2,17 +2,16 @@
 
 import React, { useState, useEffect } from "react";
 import { FiPlus } from "react-icons/fi";
-import AddCategory from "./AddCategory";
-import EditCategory from "./EditCategory"; // Import the new component
+import CategoryModal from "./CategoryModal";
 import Table from "../../../components/Table";
 import { categoriesColumns } from "../../../data/categoriesColumns";
 import axios from "axios";
 import { API_BASE_URL, API_URLS, getHeaders } from "../../../api/constant";
 
 const ProductCategories = () => {
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false); // New state for edit modal
-  const [categoryToEdit, setCategoryToEdit] = useState(null); // New state to hold the item being edited
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [categoryToEdit, setCategoryToEdit] = useState(null);
+  const [modalMode, setModalMode] = useState("add"); // 'add' or 'edit'
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -40,36 +39,37 @@ const ProductCategories = () => {
   }, []);
 
   const handleAddModalOpen = () => {
-    setIsAddModalOpen(true);
-  };
-
-  const handleAddModalClose = () => {
-    setIsAddModalOpen(false);
+    setModalMode("add");
+    setCategoryToEdit(null);
+    setIsModalOpen(true);
   };
 
   const handleEditModalOpen = (category) => {
-    setCategoryToEdit(category); // Set the category data to be edited
-    setIsEditModalOpen(true);
+    setModalMode("edit");
+    setCategoryToEdit(category);
+    setIsModalOpen(true);
   };
 
-  const handleEditModalClose = () => {
-    setCategoryToEdit(null); // Clear the category data
-    setIsEditModalOpen(false);
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setCategoryToEdit(null);
   };
 
-  const handleCategoryAdded = (newCategory) => {
-    setCategories((prev) => [...prev, newCategory]);
-    // fetchCategories(); // Or you can refetch all categories
-  };
-
-  const handleCategoryUpdated = (updatedCategory) => {
-    setCategories((prev) =>
-      prev.map((cat) => (cat.id === updatedCategory.id ? updatedCategory : cat))
-    );
+  const handleCategorySuccess = (categoryData, mode) => {
+    if (mode === "add") {
+      // Add new category to the list
+      setCategories((prev) => [...prev, categoryData]);
+    } else if (mode === "edit") {
+      // Update existing category in the list
+      setCategories((prev) =>
+        prev.map((cat) => (cat.id === categoryData.id ? categoryData : cat))
+      );
+    }
+    
+    // Optional: Refetch all categories to ensure data consistency
     // fetchCategories();
   };
 
-  // --- New Delete Handler ---
   const handleDeleteCategory = async (categoryId) => {
     if (window.confirm("Are you sure you want to delete this category?")) {
       try {
@@ -79,7 +79,7 @@ const ProductCategories = () => {
           config
         );
 
-        // Optimistically remove the category from the list
+        // Remove the category from the list
         setCategories((prev) => prev.filter((cat) => cat.id !== categoryId));
         console.log(`Category with ID ${categoryId} deleted successfully.`);
       } catch (error) {
@@ -124,23 +124,18 @@ const ProductCategories = () => {
         </button>
       </div>
 
-      <AddCategory
-        open={isAddModalOpen}
-        handleClose={handleAddModalClose}
-        onCategoryAdded={handleCategoryAdded}
+      {/* Single reusable modal for both add and edit */}
+      <CategoryModal
+        open={isModalOpen}
+        handleClose={handleModalClose}
+        categoryToEdit={categoryToEdit}
+        onCategorySuccess={handleCategorySuccess}
+        mode={modalMode}
       />
 
-      {/* New EditCategory Modal */}
-      <EditCategory
-        open={isEditModalOpen}
-        handleClose={handleEditModalClose}
-        categoryToEdit={categoryToEdit}
-        onCategoryUpdated={handleCategoryUpdated}
-      />
       <div className="dark:text-white text-black">
         <Table
           data={categories}
-          // Pass the handlers to the columns function
           fields={categoriesColumns(handleEditModalOpen, handleDeleteCategory)}
           numberOfRows={10}
           enableTopToolBar={true}

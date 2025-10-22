@@ -84,7 +84,7 @@ const Shop = () => {
   return (
     <main className="min-h-screen bg-[#f7f6f0] dark:bg-gray-900 text-gray-800 dark:text-gray-100">
       {/* Banner */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-2">
         <Banner />
       </div>
 

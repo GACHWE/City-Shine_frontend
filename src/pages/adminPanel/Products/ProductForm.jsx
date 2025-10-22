@@ -345,7 +345,7 @@ const ProductForm = ({
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 z-50 flex items-center justify-center overflow-y-auto font-inter">
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-4xl mx-auto m-4 flex flex-col">
         {/* Sticky Header */}
-        {/* <div className="flex justify-between items-center  pb-2 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10">
+        <div className="flex justify-between items-center  pb-2 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10">
           <h3 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-gray-100">
             {product ? "Edit Product" : "Add New Product"}
           </h3>
@@ -356,7 +356,7 @@ const ProductForm = ({
           >
             <X className="h-6 w-6" />
           </button>
-        </div> */}
+        </div>
 
         {/* Form Content */}
         <form

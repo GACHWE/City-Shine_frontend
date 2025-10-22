@@ -6,26 +6,45 @@ import _ from "lodash";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import Rating from "../../components/Rating/Rating";
 import ProductColors from "./ProductColors";
-import SvgCreditCard from "../../components/common/SvgCreditCard";
 import SvgCloth from "../../components/common/SvgCloth";
-import SvgShipping from "../../components/common/SvgShipping";
 import SvgReturn from "../../components/common/SvgReturn";
-import SectionHeading from "../../components/Sections/SectionsHeading/SectionHeading";
 import ProductCard from "../ProductListPage/ProductCard";
 
 import { fetchProducts } from "../../api/fetchProducts";
 import { addItemToCartAction } from "../../store/actions/cartAction";
 import Carousel from "../../components/common/Carousel";
 import { AiOutlineWhatsApp } from "react-icons/ai";
-import { FiShoppingCart, FiChevronLeft, FiChevronRight, FiShare2, FiHeart } from "react-icons/fi";
+import {
+  FiShoppingCart,
+  FiChevronLeft,
+  FiChevronRight,
+  FiShare2,
+  FiHeart,
+} from "react-icons/fi";
 import { TbTruckDelivery } from "react-icons/tb";
 import { IoShieldCheckmarkOutline } from "react-icons/io5";
 
 const extraSections = [
-  { icon: <IoShieldCheckmarkOutline className="text-lg" />, label: "Secure payment", description: "Your payment information is protected" },
-  { icon: <SvgCloth />, label: "Size & Fit", description: "Perfect fit guaranteed" },
-  { icon: <TbTruckDelivery className="text-lg" />, label: "Free shipping", description: "On orders over Ksh 2,000" },
-  { icon: <SvgReturn />, label: "Free Returns", description: "30-day return policy" },
+  {
+    icon: <IoShieldCheckmarkOutline className="text-lg" />,
+    label: "Secure payment",
+    description: "Your payment information is protected",
+  },
+  {
+    icon: <SvgCloth />,
+    label: "Size & Fit",
+    description: "Perfect fit guaranteed",
+  },
+  {
+    icon: <TbTruckDelivery className="text-lg" />,
+    label: "Free shipping",
+    description: "On orders over Ksh 2,000",
+  },
+  {
+    icon: <SvgReturn />,
+    label: "Free Returns",
+    description: "30-day return policy",
+  },
 ];
 
 const ProductDetails = () => {
@@ -82,9 +101,11 @@ const ProductDetails = () => {
     )?.url;
     const fallbackImage = product?.productResources?.[0]?.url;
     setCurrentDisplayImage(primaryImage || fallbackImage || "");
-    
+
     if (product?.productResources?.length) {
-      const primaryIndex = product.productResources.findIndex(res => res.isPrimary);
+      const primaryIndex = product.productResources.findIndex(
+        (res) => res.isPrimary
+      );
       setCurrentImageIndex(primaryIndex >= 0 ? primaryIndex : 0);
     }
 
@@ -121,8 +142,8 @@ const ProductDetails = () => {
       setIsSticky(scrollTop > 200);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const selectedVariant = useMemo(() => {
@@ -172,11 +193,13 @@ const ProductDetails = () => {
 
   const navigateImage = (direction) => {
     if (!product?.productResources?.length) return;
-    
-    const newIndex = direction === 'next' 
-      ? (currentImageIndex + 1) % product.productResources.length
-      : (currentImageIndex - 1 + product.productResources.length) % product.productResources.length;
-    
+
+    const newIndex =
+      direction === "next"
+        ? (currentImageIndex + 1) % product.productResources.length
+        : (currentImageIndex - 1 + product.productResources.length) %
+          product.productResources.length;
+
     setCurrentImageIndex(newIndex);
     setCurrentDisplayImage(product.productResources[newIndex].url);
   };
@@ -190,12 +213,12 @@ const ProductDetails = () => {
           url: window.location.href,
         });
       } catch (err) {
-        console.log('Error sharing:', err);
+        console.log("Error sharing:", err);
       }
     } else {
       // Fallback: copy to clipboard
       navigator.clipboard.writeText(window.location.href);
-      alert('Product link copied to clipboard!');
+      alert("Product link copied to clipboard!");
     }
   };
 
@@ -250,14 +273,14 @@ const ProductDetails = () => {
                   {product?.productResources?.length > 1 && (
                     <>
                       <button
-                        onClick={() => navigateImage('prev')}
+                        onClick={() => navigateImage("prev")}
                         className="absolute left-2 lg:left-4 top-1/2 transform -translate-y-1/2 bg-white/90 dark:bg-gray-700/90 rounded-full p-3 shadow-lg z-10 hover:bg-white dark:hover:bg-gray-600 transition-all duration-200 lg:hidden"
                         aria-label="Previous image"
                       >
                         <FiChevronLeft className="text-xl" />
                       </button>
                       <button
-                        onClick={() => navigateImage('next')}
+                        onClick={() => navigateImage("next")}
                         className="absolute right-2 lg:right-4 top-1/2 transform -translate-y-1/2 bg-white/90 dark:bg-gray-700/90 rounded-full p-3 shadow-lg z-10 hover:bg-white dark:hover:bg-gray-600 transition-all duration-200 lg:hidden"
                         aria-label="Next image"
                       >
@@ -265,14 +288,15 @@ const ProductDetails = () => {
                       </button>
                     </>
                   )}
-                  
+
                   {/* Image Counter */}
                   {product?.productResources?.length > 1 && (
                     <div className="absolute top-4 right-4 bg-black/70 text-white text-sm px-3 py-1 rounded-full z-10">
-                      {currentImageIndex + 1} / {product.productResources.length}
+                      {currentImageIndex + 1} /{" "}
+                      {product.productResources.length}
                     </div>
                   )}
-                  
+
                   {/* Main Image */}
                   <div className="flex items-center justify-center min-h-[400px] lg:min-h-[500px]">
                     <img
@@ -281,10 +305,10 @@ const ProductDetails = () => {
                       className="max-w-full max-h-[500px] object-contain rounded-lg"
                     />
                   </div>
-                  
+
                   {/* Mobile Gallery Expand Button */}
                   {product?.productResources?.length > 1 && (
-                    <button 
+                    <button
                       onClick={() => setIsMobileGalleryExpanded(true)}
                       className="mt-4 text-blue-600 dark:text-blue-400 font-medium flex items-center justify-center w-full lg:hidden text-sm"
                     >
@@ -297,7 +321,11 @@ const ProductDetails = () => {
           </div>
 
           {/* Product Details - Right Column */}
-          <div className={`lg:col-span-5 ${isSticky ? 'lg:sticky lg:top-24 lg:self-start' : ''}`}>
+          <div
+            className={`lg:col-span-5 ${
+              isSticky ? "lg:sticky lg:top-24 lg:self-start" : ""
+            }`}
+          >
             <div className="space-y-6">
               {/* Header Section */}
               <div className="space-y-4">
@@ -322,36 +350,48 @@ const ProductDetails = () => {
                         ? `Ksh ${product.price.toLocaleString()}`
                         : "Price not available"}
                     </p>
-                    {product?.originalPrice && product.originalPrice > product.price && (
-                      <p className="text-sm text-gray-500 line-through">
-                        Ksh {product.originalPrice.toLocaleString()}
-                      </p>
-                    )}
+                    {product?.originalPrice &&
+                      product.originalPrice > product.price && (
+                        <p className="text-sm text-gray-500 line-through">
+                          Ksh {product.originalPrice.toLocaleString()}
+                        </p>
+                      )}
                   </div>
                 </div>
               </div>
 
               {/* Description */}
               <div className="prose prose-gray dark:prose-invert max-w-none">
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  {product?.description}
-                </p>
+                <ul className="text-gray-600 dark:text-gray-300 leading-relaxed list-disc list-inside space-y-1">
+                  {product?.description?.split("\n").map((point, index) => (
+                    <li key={index}>{point.trim()}</li>
+                  ))}
+                </ul>
               </div>
-
               {/* Key Features Grid */}
               <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
                 <div className="text-center">
-                  <p className="font-semibold text-sm text-gray-600 dark:text-gray-400">Condition</p>
+                  <p className="font-semibold text-sm text-gray-600 dark:text-gray-400">
+                    Condition
+                  </p>
                   <p className="text-lg font-bold text-gray-900 dark:text-white">
                     {product.variants.conditionStatus}
                   </p>
                 </div>
                 <div className="text-center">
-                  <p className="font-semibold text-sm text-gray-600 dark:text-gray-400">Availability</p>
-                  <p className={`text-lg font-bold ${selectedVariant?.stockQuantity > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {selectedVariant?.stockQuantity > 0 
-                      ? `${selectedVariant.stockQuantity} in stock` 
-                      : 'Out of stock'}
+                  <p className="font-semibold text-sm text-gray-600 dark:text-gray-400">
+                    Availability
+                  </p>
+                  <p
+                    className={`text-lg font-bold ${
+                      selectedVariant?.stockQuantity > 0
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
+                    {selectedVariant?.stockQuantity > 0
+                      ? `${selectedVariant.stockQuantity} in stock`
+                      : "Out of stock"}
                   </p>
                 </div>
               </div>
@@ -361,7 +401,9 @@ const ProductDetails = () => {
                 <div className="flex items-center justify-between">
                   <p className="font-semibold text-lg">Select Color</p>
                   {selectedColor && (
-                    <p className="text-sm text-gray-500">Selected: {selectedColor}</p>
+                    <p className="text-sm text-gray-500">
+                      Selected: {selectedColor}
+                    </p>
                   )}
                 </div>
                 {colors.length > 0 ? (
@@ -411,16 +453,15 @@ const ProductDetails = () => {
                 {/* Trust Badges */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                   {extraSections.map((section, idx) => (
-                    <div
-                      key={idx}
-                      className="text-center space-y-2 p-2"
-                    >
+                    <div key={idx} className="text-center space-y-2 p-2">
                       <div className="text-blue-600 dark:text-blue-400 mx-auto text-2xl">
                         {section.icon}
                       </div>
                       <div>
                         <p className="font-semibold text-xs">{section.label}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">{section.description}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {section.description}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -433,13 +474,19 @@ const ProductDetails = () => {
         {/* Similar Products Section */}
         <div className="mt-16 border-t border-gray-200 dark:border-gray-800 pt-12">
           <div className="text-center mb-8">
-            <h2 className="text-2xl lg:text-3xl font-bold mb-2">You Might Also Like</h2>
-            <p className="text-gray-600 dark:text-gray-400">Discover similar products that match your style</p>
+            <h2 className="text-2xl lg:text-3xl font-bold mb-2">
+              You Might Also Like
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400">
+              Discover similar products that match your style
+            </p>
           </div>
-          
+
           {loadingSimilar ? (
             <div className="flex justify-center py-10">
-              <div className="animate-pulse text-gray-500">Loading similar products...</div>
+              <div className="animate-pulse text-gray-500">
+                Loading similar products...
+              </div>
             </div>
           ) : similarError ? (
             <div className="text-center py-10 text-red-500">{similarError}</div>
@@ -467,7 +514,7 @@ const ProductDetails = () => {
       {isMobileGalleryExpanded && (
         <div className="fixed inset-0 bg-black/95 z-50 flex flex-col items-center justify-center p-4 lg:hidden">
           <div className="absolute top-4 right-4 z-10">
-            <button 
+            <button
               onClick={() => setIsMobileGalleryExpanded(false)}
               className="text-white text-2xl p-2 bg-black/50 rounded-full"
               aria-label="Close gallery"
@@ -475,38 +522,38 @@ const ProductDetails = () => {
               &times;
             </button>
           </div>
-          
+
           <div className="relative w-full h-4/5 flex items-center justify-center">
             <img
               src={currentDisplayImage}
               alt={product?.name}
               className="max-w-full max-h-full object-contain"
             />
-            
+
             {product?.productResources?.length > 1 && (
               <>
                 <button
-                  onClick={() => navigateImage('prev')}
+                  onClick={() => navigateImage("prev")}
                   className="absolute left-2 bg-white/20 rounded-full p-3 text-white hover:bg-white/30 transition-colors"
                   aria-label="Previous image"
                 >
                   <FiChevronLeft className="text-xl" />
                 </button>
                 <button
-                  onClick={() => navigateImage('next')}
+                  onClick={() => navigateImage("next")}
                   className="absolute right-2 bg-white/20 rounded-full p-3 text-white hover:bg-white/30 transition-colors"
                   aria-label="Next image"
                 >
                   <FiChevronRight className="text-xl" />
                 </button>
-                
+
                 <div className="absolute bottom-4 bg-black/70 text-white text-sm px-4 py-2 rounded-full">
                   {currentImageIndex + 1} / {product.productResources.length}
                 </div>
               </>
             )}
           </div>
-          
+
           <div className="mt-4 flex gap-3 overflow-x-auto py-2 w-full px-4">
             {product?.productResources?.map((item, index) => (
               <button

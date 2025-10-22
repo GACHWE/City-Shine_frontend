@@ -2,7 +2,7 @@ export { default as Dashboard } from "./Dashboard";
 export { default as Products } from "./Products/Products";
 export { default as AddProduct } from "./Products/ProductForm";
 // export { default as SingleProduct } from "./SingleProduct";
-export { default as Categories } from "./Categories/Categories";
+export { default as Categories } from "./Categories/ProductCategories";
 // export { default as Customers } from "./Customers";
 // export { default as SingleCustomer } from "./SingleCustomer";
 // export { default as SalesAnalytics } from "./SalesAnalytics";
