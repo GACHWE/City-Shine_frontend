@@ -57,7 +57,7 @@ const ProductCard = ({ product }) => {
   const isOutOfStock = stockQuantity <= 0;
 
   return (
-    <div className="relative flex flex-col w-full h-full p-3 bg-gradient-to-br from-white to-yellow-50 dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg">
+    <div className="relative flex flex-col w-full h-full p-3 bg-gradient-to-br from-white to-yellow-50 dark:bg-gradient-to-br dark:from-gray-700 dark:to-gray-900 rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg">
       {/* Product Tags */}
       <div className="absolute top-2 left-2 z-10 space-y-1">
         {isNewArrival && (

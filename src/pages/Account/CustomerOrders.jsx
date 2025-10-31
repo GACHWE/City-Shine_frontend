@@ -28,7 +28,13 @@ const CustomerOrders = () => {
   const [page, setPage] = useState(0);
   const pageSize = 20;
 
-  // TODO: Consider implementing infinite scroll or lazy loading for large datasets
+  const filterOptions = [
+    { value: "ACTIVE", label: "Active", color: "bg-blue-500" },
+    { value: "COMPLETED", label: "Completed", color: "bg-green-500" },
+    { value: "CANCELLED", label: "Cancelled", color: "bg-red-500" },
+    { value: "ALL", label: "All", color: "bg-gray-500" },
+  ];
+
   const fetchOrders = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -124,11 +130,11 @@ const CustomerOrders = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 pb-10">
-        <div className="max-w-6xl mx-auto px-4">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 pb-10 px-3 sm:px-4">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent mx-auto"></div>
-            <p className="mt-4 text-gray-500 dark:text-gray-400">
+            <p className="mt-4 text-gray-500 dark:text-gray-400 text-sm sm:text-base">
               Loading your orders...
             </p>
           </div>
@@ -139,17 +145,17 @@ const CustomerOrders = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 pb-10">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-            <FaExclamationTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 pb-10 px-3 sm:px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow-md mx-2 sm:mx-0">
+            <FaExclamationTriangle className="w-12 h-12 sm:w-16 sm:h-16 text-red-500 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 px-4">
               Unable to load orders
             </h3>
-            <p className="text-gray-500 dark:text-gray-400 mb-6">{error}</p>
+            <p className="text-gray-500 dark:text-gray-400 mb-6 px-4 text-sm sm:text-base">{error}</p>
             <button
               onClick={fetchOrders}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-sm sm:text-base"
             >
               Try Again
             </button>
@@ -160,140 +166,167 @@ const CustomerOrders = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 pb-10">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 pb-10 px-3 sm:px-4">
+      <div className="max-w-6xl mx-auto">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
+          <div className="w-full sm:w-auto">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
               My Orders
             </h1>
-            <p className="mt-2 text-gray-600 dark:text-gray-400">
+            <p className="mt-1 sm:mt-2 text-gray-600 dark:text-gray-400 text-sm sm:text-base">
               Track and manage your orders
             </p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col xs:flex-row gap-3 w-full sm:w-auto">
             <button
               onClick={fetchOrders}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+              className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg transition-colors text-sm sm:text-base order-2 xs:order-1"
             >
               <FaSync className="w-4 h-4" />
               Refresh
             </button>
-            <select
-              value={selectedFilter}
-              onChange={(e) => handleFilterChange(e.target.value)}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="ACTIVE">Active Orders</option>
-              <option value="COMPLETED">Completed Orders</option>
-              <option value="CANCELLED">Cancelled Orders</option>
-              <option value="ALL">All Orders</option>
-            </select>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+        {/* Filter Toggle */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4 mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <h3 className="text-sm font-medium text-gray-900 dark:text-white">
+              Filter Orders:
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {filterOptions.map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => handleFilterChange(option.value)}
+                  className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 ${
+                    selectedFilter === option.value
+                      ? `${option.color} text-white shadow-md`
+                      : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                  }`}
+                >
+                  <span className="flex items-center gap-1.5">
+                    {selectedFilter === option.value && (
+                      <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white rounded-full"></div>
+                    )}
+                    {option.label}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                   Total Orders
                 </p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
                   {orders.length}
                 </p>
               </div>
-              <FaShoppingBag className="w-8 h-8 text-blue-500" />
+              <FaShoppingBag className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500" />
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Active</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Active</p>
+                <p className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
                   {orders.filter((o) =>
                     ["PENDING", "PROCESSING"].includes(o.orderStatus)
                   ).length}
                 </p>
               </div>
-              <FaBox className="w-8 h-8 text-purple-500" />
+              <FaBox className="w-6 h-6 sm:w-8 sm:h-8 text-purple-500" />
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                   Delivered
                 </p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
                   {orders.filter((o) => o.orderStatus === "DELIVERED").length}
                 </p>
               </div>
-              <FaTruck className="w-8 h-8 text-green-500" />
+              <FaTruck className="w-6 h-6 sm:w-8 sm:h-8 text-green-500" />
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                   Cancelled
                 </p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
                   {orders.filter((o) => o.orderStatus === "CANCELLED").length}
                 </p>
               </div>
-              <FaTimesCircle className="w-8 h-8 text-red-500" />
+              <FaTimesCircle className="w-6 h-6 sm:w-8 sm:h-8 text-red-500" />
             </div>
           </div>
         </div>
 
+        {/* Orders List */}
         {filteredOrders.length === 0 ? (
-          <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow">
-            <FaShoppingBag className="w-16 h-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-            <p className="text-gray-500 dark:text-gray-400 mb-4">
-              No orders found
+          <div className="text-center py-8 sm:py-12 bg-white dark:bg-gray-800 rounded-lg shadow mx-2 sm:mx-0">
+            <FaShoppingBag className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+            <p className="text-gray-500 dark:text-gray-400 mb-3 sm:mb-4 text-sm sm:text-base">
+              No {selectedFilter.toLowerCase() !== "all" ? selectedFilter.toLowerCase() : ""} orders found
             </p>
-            <p className="text-sm text-gray-400 dark:text-gray-500">
+            <p className="text-xs sm:text-sm text-gray-400 dark:text-gray-500 px-4">
               {selectedFilter === "ACTIVE"
                 ? "You don't have any active orders at the moment."
-                : `You don't have any ${selectedFilter.toLowerCase()} orders.`}
+                : selectedFilter === "COMPLETED"
+                ? "You don't have any completed orders yet."
+                : selectedFilter === "CANCELLED"
+                ? "You don't have any cancelled orders."
+                : "You don't have any orders yet."}
             </p>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6 mx-2 sm:mx-0">
             {filteredOrders.map((order) => (
               <div
                 key={order.id}
                 className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 overflow-hidden"
               >
-                <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                  <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
+                {/* Order Header */}
+                <div className="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+                  <div className="flex flex-col lg:flex-row justify-between items-start gap-3 sm:gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-col xs:flex-row xs:items-center gap-2 sm:gap-3 mb-2">
                         <div className="flex items-center gap-2">
                           {getOrderIcon(order.orderStatus)}
-                          <h3 className="font-semibold text-gray-900 dark:text-white">
+                          <h3 className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base truncate">
                             Order {formatOrderId(order.id)}
                           </h3>
                         </div>
                         <OrderStatusBadge status={order.orderStatus} />
                       </div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                      <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                         Placed on {formatDate(order.orderDate)}
                       </p>
-                      <div className="flex flex-wrap gap-4 mt-2">
-                        <p className="text-lg font-bold text-gray-900 dark:text-white">
+                      <div className="flex flex-col xs:flex-row xs:items-center gap-2 sm:gap-4 mt-2">
+                        <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
                           {formatCurrency(order.totalAmount)}
                         </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                           Payment: {order.paymentStatus} • {order.paymentMethod}
                         </p>
                       </div>
                     </div>
-                    <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="flex flex-col xs:flex-row gap-2 w-full xs:w-auto mt-3 xs:mt-0">
                       <button
                         onClick={() => handleViewOrder(order)}
-                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                        className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-lg transition-colors text-xs sm:text-sm"
                       >
                         View Details
                       </button>
@@ -301,7 +334,7 @@ const CustomerOrders = () => {
                         order.orderStatus !== "DELIVERED" && (
                           <button
                             onClick={() => handleCancelOrder(order.id)}
-                            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
+                            className="bg-red-600 hover:bg-red-700 text-white px-3 sm:px-4 py-2 rounded-lg transition-colors text-xs sm:text-sm"
                           >
                             Cancel Order
                           </button>
@@ -309,25 +342,27 @@ const CustomerOrders = () => {
                     </div>
                   </div>
                 </div>
-                <div className="p-6">
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-4">
+
+                {/* Order Items */}
+                <div className="p-4 sm:p-6">
+                  <h4 className="font-medium text-gray-900 dark:text-white mb-3 sm:mb-4 text-sm sm:text-base">
                     Order Items ({order.orderItemList?.length || 0})
                   </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     {order.orderItemList?.slice(0, 4).map((item, index) => (
                       <div
                         key={index}
-                        className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded border"
+                        className="flex items-center gap-3 p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded border"
                       >
                         {item.imageUrl && (
                           <img
                             src={item.imageUrl}
                             alt={item.product?.name}
-                            className="w-12 h-12 object-cover rounded"
+                            className="w-10 h-10 sm:w-12 sm:h-12 object-cover rounded"
                           />
                         )}
-                        <div className="flex-1">
-                          <p className="font-medium text-gray-900 dark:text-white text-sm">
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-gray-900 dark:text-white text-xs sm:text-sm truncate">
                             {item.product?.name || "Product"}
                           </p>
                           <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -337,15 +372,15 @@ const CustomerOrders = () => {
                       </div>
                     ))}
                     {order.orderItemList?.length > 4 && (
-                      <div className="flex items-center justify-center p-3 bg-gray-50 dark:bg-gray-700 rounded border">
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                      <div className="flex items-center justify-center p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded border">
+                        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                           +{order.orderItemList.length - 4} more items
                         </p>
                       </div>
                     )}
                   </div>
-                  <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-200 dark:border-blue-800">
-                    <p className="text-sm text-blue-700 dark:text-blue-300">
+                  <div className="mt-3 sm:mt-4 p-2 sm:p-3 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-200 dark:border-blue-800">
+                    <p className="text-xs sm:text-sm text-blue-700 dark:text-blue-300">
                       Expected delivery:{" "}
                       {formatDate(order.expectedDeliveryDate) || "To be confirmed"}
                     </p>

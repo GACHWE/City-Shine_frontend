@@ -203,7 +203,7 @@ const Checkout = () => {
       if (addressData.addressId) {
         orderData.addressId = addressData.addressId;
       } else if (addressData.newAddress) {
-        orderData.deliveryAddress = {
+        orderData.newAddress = {
           name: addressData.newAddress.name || "Home",
           estate: addressData.newAddress.estate,
           county: addressData.newAddress.county,
@@ -293,7 +293,7 @@ const Checkout = () => {
             Add some items to your cart before proceeding to checkout.
           </p>
           <button
-            onClick={() => navigate("/products")}
+            onClick={() => navigate("//categories")}
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
           >
             Continue Shopping

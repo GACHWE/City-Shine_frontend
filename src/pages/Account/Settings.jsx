@@ -1,11 +1,16 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { logOut } from '../../utils/jwt-helper';
 import { useNavigate } from 'react-router-dom';
 import { FaSignOutAlt, FaBell, FaLanguage, FaShieldAlt } from 'react-icons/fa';
+import Password from '../../components/settings/Password';
 
 const Settings = () => {
   const navigate = useNavigate();
+const[showPassword, setShowPassword] = useState(false);
 
+const handleClick = () => {
+  setShowPassword(true)
+}
   const onLogOut = useCallback(() => {
     logOut();
     navigate("/");
@@ -16,6 +21,23 @@ const Settings = () => {
       <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Settings</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <div className="bg-gray-50 dark:bg-gray-700/50 p-5 rounded-lg">
+          <div className="flex items-center mb-4">
+            <div className="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg mr-4">
+              <FaShieldAlt className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            </div>
+            <div>
+              <h3 className="font-medium text-gray-900 dark:text-white">Privacy & Security</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Change your Password</p>
+            </div>
+          </div>
+          <button className="w-full mt-2 px-4 py-2 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-500 transition-colors" onClick={handleClick}>
+            Change Password
+          </button>
+          {showPassword && <Password />}
+        </div>
+
 
         <div className="bg-gray-50 dark:bg-gray-700/50 p-5 rounded-lg">
           <div className="flex items-center mb-4">

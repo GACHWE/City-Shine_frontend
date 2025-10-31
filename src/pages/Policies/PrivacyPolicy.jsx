@@ -26,9 +26,8 @@ const PrivacyPolicy = () => {
                 make a purchase, or contact us for support. This may include:
               </p>
               <ul className="list-disc pl-5 text-gray-600 dark:text-gray-400 mb-4">
-                <li>Personal identification information (Name, email address, phone number)</li>
-                <li>Business information (Company name, KRA PIN, business registration details)</li>
-                <li>Payment information (MPESA details, credit card information)</li>
+                <li>Personal identification information (Name, email address, phone number and delivery address)</li>
+                <li>Payment information (MPESA details)</li>
                 <li>Communication preferences</li>
               </ul>
             </section>

@@ -6,7 +6,6 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   useReactTable,
-  getExpandedRowModel,
 } from "@tanstack/react-table";
 import { FiChevronLeft, FiChevronRight, FiSearch } from "react-icons/fi";
 
@@ -42,11 +41,13 @@ const Table = ({
   enableColumnDragging = false,
   showPreview = false,
   routeLink,
+  pagination = {}, // External pagination props
+  isLoading = false,
 }) => {
   const [globalFilter, setGlobalFilter] = useState("");
   const [columnFilters, setColumnFilters] = useState([]);
   const [rowSelection, setRowSelection] = useState({});
-  const [expanded, setExpanded] = useState({});
+  
   // ✅ Safely handle fields
   if (!Array.isArray(fields)) {
     console.warn("⚠️ `fields` is not an array:", fields);
@@ -98,6 +99,7 @@ const Table = ({
     });
   }
 
+  // Use external pagination if provided, otherwise use internal
   const table = useReactTable({
     data,
     columns,
@@ -106,7 +108,6 @@ const Table = ({
       columnFilters,
       rowSelection,
     },
-    onExpandedChange: setExpanded,
     onGlobalFilterChange: setGlobalFilter,
     onColumnFiltersChange: setColumnFilters,
     onRowSelectionChange: setRowSelection,
@@ -114,11 +115,48 @@ const Table = ({
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getCoreRowModel(),
+    // Manual pagination control
+    manualPagination: !!pagination.totalPages, // Use manual if external pagination provided
+    pageCount: pagination.totalPages || undefined,
   });
 
   useEffect(() => {
-    table.setPageSize(numberOfRows);
-  }, [numberOfRows, table]);
+    if (!pagination.totalPages) {
+      // Only use internal pagination if no external pagination provided
+      table.setPageSize(numberOfRows);
+    }
+  }, [numberOfRows, table, pagination.totalPages]);
+
+  // Handle external pagination
+  const handlePreviousPage = () => {
+    if (pagination.onPageChange && pagination.page > 0) {
+      pagination.onPageChange(pagination.page - 1);
+    } else {
+      table.previousPage();
+    }
+  };
+
+  const handleNextPage = () => {
+    if (pagination.onPageChange && pagination.page < pagination.totalPages - 1) {
+      pagination.onPageChange(pagination.page + 1);
+    } else {
+      table.nextPage();
+    }
+  };
+
+  const canPreviousPage = pagination.totalPages 
+    ? pagination.page > 0 
+    : table.getCanPreviousPage();
+
+  const canNextPage = pagination.totalPages 
+    ? pagination.page < pagination.totalPages - 1 
+    : table.getCanNextPage();
+
+  const currentPage = pagination.totalPages 
+    ? pagination.page 
+    : table.getState().pagination.pageIndex;
+
+  const totalPages = pagination.totalPages || table.getPageCount();
 
   return (
     <div className="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
@@ -137,112 +175,93 @@ const Table = ({
         </div>
       )}
 
-      <table className="overflow-x-auto">
-        <thead className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <th
-                  key={header.id}
-                  className="px-6 py-3 text-left text-sm font-semibold"
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <React.Fragment key={row.id}>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="px-6 py-4">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <th
+                    key={header.id}
+                    className="px-6 py-3 text-left text-sm font-semibold"
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </th>
                 ))}
               </tr>
+            ))}
+          </thead>
 
-              {row.getIsExpanded() && (
-                <tr className="bg-gray-100 dark:bg-gray-900">
-                  <td
-                    colSpan={row.getVisibleCells().length}
-                    className="px-6 py-4"
-                  >
-                    {/* Customize this content based on your data */}
-                    <div className="text-sm text-gray-700 dark:text-gray-300 space-y-2">
-                      <div>
-                        <strong>Customer Name:</strong>{" "}
-                        {row.original.customerName || "N/A"}
-                      </div>
-                      <div>
-                        <strong>Address:</strong>{" "}
-                        {row.original.address
-                          ? `${row.original.address.street}, ${row.original.address.city}, ${row.original.address.state}, ${row.original.address.zipCode}`
-                          : "N/A"}
-                      </div>
-                      <div>
-                        <strong>Phone:</strong>{" "}
-                        {row.original.address?.phoneNumber || "N/A"}
-                      </div>
-                      <div>
-                        <strong>Items:</strong>
-                        <ul className="list-disc list-inside">
-                          {row.original.orderItems.map((item, index) => (
-                            <li key={index}>
-                              {item.productName} (Qty: {item.quantity}) - $
-                              {item.itemPrice?.toFixed(2)}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      {row.original.expectedDeliveryDate && (
-                        <div>
-                          <strong>Expected Delivery:</strong>{" "}
-                          {new Date(
-                            row.original.expectedDeliveryDate
-                          ).toLocaleDateString()}
-                        </div>
-                      )}
-                    </div>
-                  </td>
+          <tbody>
+            {isLoading ? (
+              // Loading state
+              <tr>
+                <td colSpan={columns.length} className="px-6 py-8 text-center">
+                  <div className="flex items-center justify-center text-gray-500 dark:text-gray-400">
+                    <FiSearch className="animate-spin mr-2" />
+                    Loading data...
+                  </div>
+                </td>
+              </tr>
+            ) : table.getRowModel().rows.length === 0 ? (
+              // Empty state
+              <tr>
+                <td colSpan={columns.length} className="px-6 py-8 text-center">
+                  <div className="text-gray-500 dark:text-gray-400">
+                    No data available
+                  </div>
+                </td>
+              </tr>
+            ) : (
+              // Data rows
+              table.getRowModel().rows.map((row) => (
+                <tr key={row.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id} className="px-6 py-4">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
                 </tr>
-              )}
-            </React.Fragment>
-          ))}
-        </tbody>
-      </table>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {enableBottomToolBar && enablePagination && (
         <div className="flex items-center justify-between p-4 mt-4">
           <span className="text-sm text-gray-700 dark:text-gray-400">
             Page{" "}
             <span className="font-semibold text-gray-900 dark:text-white">
-              {table.getState().pagination.pageIndex + 1}
+              {currentPage + 1}
             </span>{" "}
             of{" "}
             <span className="font-semibold text-gray-900 dark:text-white">
-              {table.getPageCount()}
+              {totalPages}
             </span>
+            {pagination.totalItems && (
+              <span className="ml-2">
+                (Total: {pagination.totalItems} items)
+              </span>
+            )}
           </span>
 
           <div className="flex items-center space-x-2">
             <button
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
+              onClick={handlePreviousPage}
+              disabled={!canPreviousPage}
               className="p-2 text-gray-500 bg-white border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FiChevronLeft />
             </button>
             <button
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
+              onClick={handleNextPage}
+              disabled={!canNextPage}
               className="p-2 text-gray-500 bg-white border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FiChevronRight />

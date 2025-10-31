@@ -367,7 +367,7 @@ const ProductListing = ({
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="flex flex-col lg:flex-row gap-6 p-4 lg:p-6 max-w-7xl ">
+      <div className="flex flex-col lg:flex-row gap-6 p-4  ">
         {/* Filters Sidebar - Desktop */}
         {showFilters && (
           <aside className="hidden lg:block w-72 shrink-0 sticky top-20 h-[calc(100vh-5rem)] overflow-y-auto">
@@ -517,7 +517,7 @@ const ProductListing = ({
                 )}
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-8">
                 {filteredProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}

@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "build": "vite build",
+    "preview": "vite preview",
+    "ngrok": "ngrok http 3000 --host-header=rewrite"
   },
   "dependencies": {
     "@cloudinary/react": "^1.14.3",
@@ -16,9 +17,11 @@
     "@stripe/react-stripe-js": "^2.8.0",
     "@stripe/stripe-js": "^4.5.0",
     "@tanstack/react-table": "^8.21.3",
+    "@vercel/analytics": "^1.5.0",
     "apexcharts": "^5.3.1",
     "axios": "^1.7.7",
     "framer-motion": "^12.23.12",
+    "html2pdf.js": "^0.12.1",
     "lodash": "^4.17.21",
     "lucide-react": "^0.536.0",
     "moment": "^2.30.1",

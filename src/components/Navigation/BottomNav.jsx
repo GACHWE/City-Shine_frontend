@@ -5,7 +5,6 @@ import { Link, NavLink } from "react-router-dom";
 import { FaHome, FaShoppingCart, FaUser, FaUserAlt } from "react-icons/fa";
 import { AiOutlineAppstore } from "react-icons/ai";
 import { countCartItems } from "../../store/features/cart";
-import { AccountIcon } from "../common/AccountIcon";
 
 export default function BottomNav() {
   const cartLength = useSelector(countCartItems);

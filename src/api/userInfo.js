@@ -31,6 +31,22 @@ export const addAddressAPI = async (data) => {
   }
 }
 
+export const changePasswordAPI = async (oldPassword, newPassword) => {
+  const url = API_BASE_URL + '/api/user/change-password';
+  try {
+    const response = await axios.post(url, { oldPassword, newPassword }, {
+      headers: getHeaders()
+    });
+    return response?.data;
+  } catch (err) {
+    const errorMessage = err.response?.data?.message || 
+                         err.response?.data?.error || 
+                         "Failed to change password";
+    throw new Error(errorMessage);
+  }
+}
+
+
 // Helper function to convert address to Kenyan format
 const convertToKenyanAddressFormat = (data) => {
   // If already in Kenyan format, return as-is

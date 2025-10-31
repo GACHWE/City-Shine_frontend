@@ -135,9 +135,9 @@ import {
   // Brands,
 } from "./pages/AdminPanel";
 import PrivacyPolicy from "./pages/Policies/PrivacyPolicy";
-import TermsOfService from "./pages/Policies/TermsOfService";
 import ReturnPolicy from "./pages/Policies/ReturnPolicy";
 import HelpFAQ from "./pages/Policies/HelpFAQ";
+import About from "./pages/Policies/About";
 
 export const router = createBrowserRouter([
   {
@@ -175,8 +175,8 @@ export const router = createBrowserRouter([
         element: <PrivacyPolicy />,
       },
       {
-        path: "/terms-of-service",
-        element: <TermsOfService />,
+        path: "/about",
+        element: <About />,
       },
       {
         path: "/return-policy",

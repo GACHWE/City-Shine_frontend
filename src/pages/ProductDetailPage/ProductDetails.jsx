@@ -6,7 +6,6 @@ import _ from "lodash";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import Rating from "../../components/Rating/Rating";
 import ProductColors from "./ProductColors";
-import SvgCloth from "../../components/common/SvgCloth";
 import SvgReturn from "../../components/common/SvgReturn";
 import ProductCard from "../ProductListPage/ProductCard";
 
@@ -22,26 +21,27 @@ import {
   FiHeart,
 } from "react-icons/fi";
 import { TbTruckDelivery } from "react-icons/tb";
-import { IoShieldCheckmarkOutline } from "react-icons/io5";
+import { IoRepeatOutline, IoShieldCheckmarkOutline } from "react-icons/io5";
+import { FaLeaf } from "react-icons/fa";
 
 const extraSections = [
   {
-    icon: <IoShieldCheckmarkOutline className="text-lg" />,
+    icon: <IoShieldCheckmarkOutline className=" text-4xl" />,
     label: "Secure payment",
     description: "Your payment information is protected",
   },
   {
-    icon: <SvgCloth />,
-    label: "Size & Fit",
-    description: "Perfect fit guaranteed",
+    icon: <FaLeaf className="text-green-500"/>,
+    label: "Eco-Friendly",
+    description: "Less power consumption, more efficient",
   },
   {
-    icon: <TbTruckDelivery className="text-lg" />,
-    label: "Free shipping",
-    description: "On orders over Ksh 2,000",
+    icon: <TbTruckDelivery className="text-violet-600 dark:text-violet-400 text-4xl" />,
+    label: "Free Delivery",
+    description: "On all your Orders",
   },
   {
-    icon: <SvgReturn />,
+    icon: <IoRepeatOutline className="text-gray-700 dark:text-gray-400 text-4xl" />,
     label: "Free Returns",
     description: "30-day return policy",
   },
@@ -75,6 +75,7 @@ const ProductDetails = () => {
     message
   )}`;
 
+  // FIXED: Similar products fetch function
   useEffect(() => {
     if (!product?.categoryId) return;
     setLoadingSimilar(true);
@@ -84,9 +85,9 @@ const ProductDetails = () => {
       categoryId: product.categoryId,
       typeId: product.categoryTypeId,
     })
-      .then((res) => {
-        const filtered = res?.filter((item) => item?.id !== product?.id);
-        setSimilarProducts(filtered);
+      .then((res) => { 
+        const filtered = res?.data?.filter((item) => item?.id !== product?.id) || [];
+        setSimilarProducts(filtered.slice(0, 8)); // Limit to 8 products
       })
       .catch((err) => {
         console.error("Error fetching similar products:", err);
@@ -231,8 +232,8 @@ const ProductDetails = () => {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen ">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 dark:bg-gray-800">
         {/* Breadcrumb */}
         <div className="py-4 border-b border-gray-200 dark:border-gray-800">
           <Breadcrumb links={breadCrumbLinks} />
@@ -241,9 +242,9 @@ const ProductDetails = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 py-8">
           {/* Image Gallery - Left Column */}
           <div className="lg:col-span-7">
-            <div className="flex flex-col lg:flex-row gap-6">
+            <div className="flex flex-col lg:flex-row gap-6 ">
               {/* Thumbnails - Vertical on desktop */}
-              <div className="hidden lg:flex flex-col gap-4 overflow-y-auto max-h-[600px]">
+              <div className="hidden lg:flex flex-col gap-4  max-h-[600px]">
                 {product?.productResources?.map((item, index) => (
                   <button
                     key={index}
@@ -368,14 +369,15 @@ const ProductDetails = () => {
                   ))}
                 </ul>
               </div>
-              {/* Key Features Grid */}
+
+              {/* Key Features Grid - FIXED: Using selectedVariant for conditionStatus */}
               <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
                 <div className="text-center">
                   <p className="font-semibold text-sm text-gray-600 dark:text-gray-400">
                     Condition
                   </p>
                   <p className="text-lg font-bold text-gray-900 dark:text-white">
-                    {product.variants.conditionStatus}
+                    {selectedVariant?.conditionStatus || "N/A"}
                   </p>
                 </div>
                 <div className="text-center">
@@ -453,8 +455,8 @@ const ProductDetails = () => {
                 {/* Trust Badges */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                   {extraSections.map((section, idx) => (
-                    <div key={idx} className="text-center space-y-2 p-2">
-                      <div className="text-blue-600 dark:text-blue-400 mx-auto text-2xl">
+                    <div key={idx} className="flex flex-col items-center text-center space-y-2 p-2">
+                      <div className="text-blue-600 dark:text-blue-400  text-2xl">
                         {section.icon}
                       </div>
                       <div>
