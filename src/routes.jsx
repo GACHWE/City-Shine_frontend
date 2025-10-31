@@ -114,26 +114,8 @@ import CustomerOrders from "./pages/Account/CustomerOrders";
 import Settings from "./pages/Account/Settings";
 import CategoriesPage from "./pages/Categories/CategoriesPage";
 import CategoryListing from "./pages/Categories/CategoryListing";
-// Import the new AdminLayout and all the admin pages
 import AdminLayout from "./components/layouts/AdminLayout";
-import {
-  Dashboard,
-  Setting,
-  Products,
-  // AddProduct,
-  AdminOrders,
-  // SingleProduct,
-  Categories,
-  // Customers,
-  // SingleCustomer,
-  // SalesAnalytics,
-  // ProductSales,
-  // OrderTemplate,
-  // SingleOrder,
-  // Suppliers,
-  // Transactions,
-  // Brands,
-} from "./pages/AdminPanel";
+import {  Dashboard,  Setting,  Products,  AdminOrders,  Categories,} from "./pages/AdminPanel/index";
 import PrivacyPolicy from "./pages/Policies/PrivacyPolicy";
 import ReturnPolicy from "./pages/Policies/ReturnPolicy";
 import HelpFAQ from "./pages/Policies/HelpFAQ";
