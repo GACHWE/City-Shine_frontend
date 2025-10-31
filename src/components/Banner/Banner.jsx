@@ -3,9 +3,9 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { motion as Motion } from "framer-motion";
 
-import bannerImg1 from "../../../dist/assets/Adobe--TsQ2ZPh.png";
-import bannerImg2 from "../../../dist/assets/mixer2-DsWxfiki.jpg";
-import bannerImg3 from "../../../dist/assets/Adobe--TsQ2ZPh.png";
+import bannerImg1 from "../../../dist/assets/Adobe--TsQ2ZPh--TsQ2ZPh.png";
+import bannerImg2 from "../../../dist/assets/mixer2-DsWxfiki-DsWxfiki.jpg";
+import bannerImg3 from "../../../dist/assets/Adobe--TsQ2ZPh--TsQ2ZPh.png";
 
 const Banner = () => {
   const products = [
