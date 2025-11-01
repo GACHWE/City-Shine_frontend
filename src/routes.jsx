@@ -263,14 +263,7 @@ export const router = createBrowserRouter([
         path: "products",
         element: <Products />,
       },
-      // {
-      //   path: "products/add",
-      //   element: (
-      //     <AdminRoute>
-      //       <AddProduct />
-      //     </AdminRoute>
-      //   ),
-      // },
+     
       {
         path: "categories",
         element: (
