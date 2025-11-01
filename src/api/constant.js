@@ -8,7 +8,7 @@ export const API_URLS = {
   CANCEL_ORDER: (id) => `/api/admin/orders/${id}/cancel`,
 };
 
-export const API_BASE_URL = "https://8229f7ef9ffc.ngrok-free.app";
+export const API_BASE_URL = "https://9e0ec5cf3dce.ngrok-free.app";
 
 export const getHeaders = () => {
   return {
