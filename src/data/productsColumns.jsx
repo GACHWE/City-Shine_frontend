@@ -78,30 +78,29 @@ export const productsColumns = (onEdit, onDelete) => [
   }),
 
   columnHelper.accessor("variants", {
-    header: () => "Stock",
-    cell: (info) => {
-      const variants = info.getValue();
-      if (!variants || variants.length === 0) {
-        return <span className="text-gray-500 text-xs">No variants</span>;
-      }
+  header: () => "Stock",
+  cell: (info) => {
+    const variants = info.getValue();
+    if (!variants || variants.length === 0) {
+      return <span className="text-gray-500 text-xs">No variants</span>;
+    }
 
-      const totalStock = variants.reduce(
-        (sum, variants) => sum + (variants.stockQuantity || 0),
-        0
-      );
+    // Since each product has only one variant, get the first one
+    const variant = variants[0];
+    const stockQuantity = variant.stockQuantity || 0;
 
-      if (totalStock === 0) {
-        return <span className="text-red-600 text-xs font-medium">Out of Stock</span>;
-      }
+    if (stockQuantity === 0) {
+      return <span className="text-red-600 text-xs font-medium">Out of Stock</span>;
+    }
 
-      return (
-        <span className="text-green-700 font-medium text-xs">
-          {totalStock} in stock
-        </span>
-      );
-    },
-    size: 120,
-  }),
+    return (
+      <span className="text-green-700 font-medium text-xs">
+        {stockQuantity} in stock
+      </span>
+    );
+  },
+  size: 120,
+}),
 
   // columnHelper.accessor("createdAt", {
   //   header: () => "Created",

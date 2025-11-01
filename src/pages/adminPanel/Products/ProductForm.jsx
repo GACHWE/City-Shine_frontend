@@ -23,9 +23,12 @@ const ProductForm = ({
     newArrival: false,
     slug: "",
   });
-  const [variants, setVariants] = useState([
-    { key: Date.now(), color: "", conditionStatus: "NEW", stockQuantity: 0, id: null },
-  ]);
+  const [variant, setVariant] = useState({
+    color: "",
+    conditionStatus: "NEW",
+    stockQuantity: 0,
+    id: null,
+  });
   const [images, setImages] = useState([]);
   const [newImages, setNewImages] = useState([]);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
@@ -59,7 +62,7 @@ const ProductForm = ({
       }
     } catch (err) {
       console.error("Backend upload failed:", err);
-      
+
       if (err.response?.status === 400) {
         setStatusMessage({
           type: "error",
@@ -70,7 +73,7 @@ const ProductForm = ({
           type: "error",
           text: "File too large. Maximum size is 10MB.",
         });
-      } else if (err.code === 'ECONNABORTED') {
+      } else if (err.code === "ECONNABORTED") {
         setStatusMessage({
           type: "error",
           text: "Upload timeout. Please try again.",
@@ -81,7 +84,7 @@ const ProductForm = ({
           text: "Image upload failed. Please try again.",
         });
       }
-      
+
       return null;
     }
   };
@@ -119,21 +122,24 @@ const ProductForm = ({
         slug: product?.slug || "",
       });
 
-      setVariants(
-        product?.variants?.length
-          ? product.variants.map((v) => ({
-              ...v,
-              key: v.id || Date.now(),
-              conditionStatus: v.conditionStatus || "NEW",
-            }))
-          : [{
-              key: Date.now(),
+      // Set single variant - take the first variant if exists, otherwise use default
+      const firstVariant = product?.variants?.[0];
+      setVariant(
+        firstVariant
+          ? {
+              color: firstVariant.color || "",
+              conditionStatus: firstVariant.conditionStatus || "NEW",
+              stockQuantity: firstVariant.stockQuantity || 0,
+              id: firstVariant.id || null,
+            }
+          : {
               color: "",
               conditionStatus: "NEW",
               stockQuantity: 0,
               id: null,
-            }]
+            }
       );
+
       setImages(product?.productResources || []);
       setNewImages([]);
       setStatusMessage({ type: "", text: "" });
@@ -157,46 +163,25 @@ const ProductForm = ({
   // Handle image file selection
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    
+
     // Validate file types
-    const validFiles = files.filter(file => 
-      ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.type)
+    const validFiles = files.filter((file) =>
+      ["image/jpeg", "image/png", "image/gif", "image/webp"].includes(file.type)
     );
-    
+
     if (validFiles.length !== files.length) {
       setStatusMessage({
         type: "error",
         text: "Some files were skipped. Only images are allowed.",
       });
     }
-    
+
     setNewImages((prev) => [...prev, ...validFiles]);
   };
 
   // Handle changes to variant fields
-  const handleVariantChange = (key, field, value) => {
-    setVariants((prev) =>
-      prev.map((v) => (v.key === key ? { ...v, [field]: value } : v))
-    );
-  };
-
-  // Add a new empty variant row
-  const addVariant = () => {
-    setVariants((prev) => [
-      ...prev,
-      {
-        key: Date.now(),
-        color: "",
-        conditionStatus: "NEW",
-        stockQuantity: 0,
-        id: null,
-      },
-    ]);
-  };
-
-  // Remove a variant row by its key
-  const removeVariant = (key) => {
-    setVariants((prev) => prev.filter((v) => v.key !== key));
+  const handleVariantChange = (field, value) => {
+    setVariant((prev) => ({ ...prev, [field]: value }));
   };
 
   // Remove an image from the preview
@@ -250,8 +235,12 @@ const ProductForm = ({
       return;
     }
 
-    if (variants.some((v) => !v.color || v.stockQuantity === null)) {
-      setStatusMessage({ type: "error", text: "Fill in all variant fields." });
+    // Single variant validation
+    if (!variant.color) {
+      setStatusMessage({
+        type: "error",
+        text: "Fill in the color variant field.",
+      });
       setIsLoading(false);
       return;
     }
@@ -262,7 +251,7 @@ const ProductForm = ({
     );
     setIsUploadingImage(false);
 
-    const successfulUploads = uploadedImageUrls.filter(url => url !== null);
+    const successfulUploads = uploadedImageUrls.filter((url) => url !== null);
 
     if (newImages.length > 0 && successfulUploads.length === 0) {
       setStatusMessage({
@@ -305,11 +294,13 @@ const ProductForm = ({
       price: parseFloat(productData.price),
       discount: parseFloat(productData.discount) || 0,
       rating: parseInt(productData.rating) || 0,
-      variants: variants.map(({ key, ...v }) => ({
-        color: v.color,
-        conditionStatus: v.conditionStatus,
-        stockQuantity: parseInt(v.stockQuantity, 10),
-      })),
+      variants: [
+        {
+          color: variant.color,
+          conditionStatus: variant.conditionStatus,
+          stockQuantity: parseInt(variant.stockQuantity, 10),
+        },
+      ],
       productResources: allResources,
     };
 
@@ -434,12 +425,16 @@ const ProductForm = ({
                 id="product-categoryId"
                 value={productData.categoryId}
                 onChange={handleChange}
-                className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-transparent p-2 text-sm focus:border-blue-500 dark:text-gray-100 transition-colors"
+                className="w-full rounded-md dark:bg-gray-800 border border-gray-300 dark:border-gray-600 bg-transparent p-2 text-sm focus:border-blue-500 dark:text-gray-100 transition-colors"
                 required
               >
-                <option value="" disabled>Select a Category</option>
+                <option value="" disabled>
+                  Select a Category
+                </option>
                 {fetchedCategories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
                 ))}
               </select>
             </div>
@@ -567,7 +562,10 @@ const ProductForm = ({
                 type="checkbox"
                 checked={productData.newArrival || false}
                 onChange={(e) =>
-                  setProductData({ ...productData, newArrival: e.target.checked })
+                  setProductData({
+                    ...productData,
+                    newArrival: e.target.checked,
+                  })
                 }
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
               />
@@ -580,89 +578,78 @@ const ProductForm = ({
             </div>
           </div>
 
-          {/* Variants Section */}
+          {/* Single Variant Section */}
           <div className="space-y-4">
             <h4 className="text-md font-semibold text-gray-900 dark:text-gray-100">
-              Product Variants
+              Product Variant
             </h4>
-            {variants.map((variant, index) => (
-              <div
-                key={variant.key}
-                className="flex flex-col sm:flex-row gap-4 items-center p-4 border rounded-lg dark:border-gray-700"
-              >
-                <div className="w-full sm:w-1/3">
-                  <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Color *
-                  </label>
-                  <input
-                    type="text"
-                    value={variant.color}
-                    onChange={(e) =>
-                      handleVariantChange(variant.key, "color", e.target.value)
-                    }
-                    placeholder="Color"
-                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-transparent p-2 text-sm focus:border-blue-500 dark:text-gray-100"
-                    required
-                  />
-                </div>
-                <div className="w-full sm:w-1/3">
-                  <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Stock Quantity *
-                  </label>
-                  <input
-                    type="number"
-                    value={variant.stockQuantity}
-                    onChange={(e) =>
-                      handleVariantChange(
-                        variant.key,
-                        "stockQuantity",
-                        parseInt(e.target.value) || 0
-                      )
-                    }
-                    placeholder="Stock"
-                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-transparent p-2 text-sm focus:border-blue-500 dark:text-gray-100"
-                    required
-                  />
-                </div>
-                <div className="w-full sm:w-1/3">
-                  <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Condition *
-                  </label>
-                  <select
-                    value={variant.conditionStatus}
-                    onChange={(e) =>
-                      handleVariantChange(
-                        variant.key,
-                        "conditionStatus",
-                        e.target.value
-                      )
-                    }
-                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-transparent p-2 text-sm focus:border-blue-500 dark:text-gray-100"
-                    required
-                  >
-                    <option value="NEW">New</option>
-                    <option value="USED">Used</option>
-                    <option value="REFURBISHED">Refurbished</option>
-                  </select>
-                </div>
-                {variants.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeVariant(variant.key)}
-                    className="text-gray-400 hover:text-red-500 p-2 transition-colors flex-shrink-0"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                )}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 border rounded-lg dark:border-gray-700">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Color *
+                </label>
+                <input
+                  type="text"
+                  value={variant.color}
+                  onChange={(e) => handleVariantChange("color", e.target.value)}
+                  placeholder="Color"
+                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-transparent p-2 text-sm focus:border-blue-500 dark:text-gray-100"
+                  required
+                />
               </div>
-            ))}
-            <button
-              type="button"
-              onClick={addVariant}
-              className="mt-2 text-blue-600 dark:text-blue-400 font-medium text-sm hover:underline"
-            >
-              + Add another variant
-            </button>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Stock Quantity *
+                </label>
+                <input
+                  type="number"
+                  value={variant.stockQuantity}
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    // Handle empty input
+                    if (value === "") {
+                      handleVariantChange("stockQuantity", 0);
+                      return;
+                    }
+
+                    // Parse as integer
+                    const parsedValue = parseInt(value, 10);
+
+                    // Allow 0 and positive numbers, default to 0 for invalid values
+                    if (!isNaN(parsedValue) && parsedValue >= 0) {
+                      handleVariantChange("stockQuantity", parsedValue);
+                    } else {
+                      handleVariantChange("stockQuantity", 0);
+                    }
+                  }}
+                  min="0"
+                  placeholder="0"
+                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-transparent p-2 text-sm focus:border-blue-500 dark:text-gray-100"
+                  required
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Enter 0 for out of stock items
+                </p>
+              </div>{" "}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Condition *
+                </label>
+                <select
+                  value={variant.conditionStatus}
+                  onChange={(e) =>
+                    handleVariantChange("conditionStatus", e.target.value)
+                  }
+                  className="w-full rounded-md dark:bg-gray-800 border border-gray-300 dark:border-gray-600 bg-transparent p-2 text-sm focus:border-blue-500 dark:text-gray-100"
+                  required
+                >
+                  <option value="NEW">New</option>
+                  <option value="USED">Used</option>
+                  <option value="REFURBISHED">Refurbished</option>
+                </select>
+              </div>
+            </div>
           </div>
 
           {/* Images Section */}

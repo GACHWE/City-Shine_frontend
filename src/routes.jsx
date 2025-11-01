@@ -114,30 +114,12 @@ import CustomerOrders from "./pages/Account/CustomerOrders";
 import Settings from "./pages/Account/Settings";
 import CategoriesPage from "./pages/Categories/CategoriesPage";
 import CategoryListing from "./pages/Categories/CategoryListing";
-// Import the new AdminLayout and all the admin pages
 import AdminLayout from "./components/layouts/AdminLayout";
-import {
-  Dashboard,
-  Setting,
-  Products,
-  // AddProduct,
-  AdminOrders,
-  // SingleProduct,
-  Categories,
-  // Customers,
-  // SingleCustomer,
-  // SalesAnalytics,
-  // ProductSales,
-  // OrderTemplate,
-  // SingleOrder,
-  // Suppliers,
-  // Transactions,
-  // Brands,
-} from "./pages/AdminPanel";
+import {  Dashboard,  Setting,  Products,  AdminOrders,  Categories,} from "./pages/AdminPanel/index";
 import PrivacyPolicy from "./pages/Policies/PrivacyPolicy";
-import TermsOfService from "./pages/Policies/TermsOfService";
 import ReturnPolicy from "./pages/Policies/ReturnPolicy";
 import HelpFAQ from "./pages/Policies/HelpFAQ";
+import About from "./pages/Policies/About";
 
 export const router = createBrowserRouter([
   {
@@ -175,8 +157,8 @@ export const router = createBrowserRouter([
         element: <PrivacyPolicy />,
       },
       {
-        path: "/terms-of-service",
-        element: <TermsOfService />,
+        path: "/about",
+        element: <About />,
       },
       {
         path: "/return-policy",

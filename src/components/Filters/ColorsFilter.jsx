@@ -11,7 +11,6 @@ export const colorSelector = {
     "Navy": "#000080",
     "Grey": "#808080",
     "Yellow": "#FFFF00",
-    "Pink": "#FFC0CB",
     "Green": "#008000"
 
 }

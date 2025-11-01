@@ -1,106 +1,100 @@
-// src/components/settings/Password.jsx
-
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { changePasswordAPI } from '../../api/userInfo';
 
 const Password = () => {
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmNewPassword, setConfirmNewPassword] = useState("");
-  const [status, setStatus] = useState(null);
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  const handleChangePassword = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setStatus(null); // Clear previous status
+    setError('');
+    setSuccess('');
 
-    if (newPassword !== confirmNewPassword) {
-      setStatus({ type: "error", message: "New passwords do not match." });
+    if (newPassword !== confirmPassword) {
+      setError('New password and confirmation do not match');
       return;
     }
 
-    // In a real app, you would send this data to your backend
-    console.log("Changing password:", { currentPassword, newPassword });
-    setStatus({ type: "success", message: "Password changed successfully!" });
+    if (newPassword.length < 6) {
+      setError('New password must be at least 6 characters long');
+      return;
+    }
 
-    // Clear form
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmNewPassword("");
+    try {
+      const response = await changePasswordAPI(oldPassword, newPassword);
+      setSuccess(response);
+      setOldPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
-    <form onSubmit={handleChangePassword} className="space-y-6 max-w-lg">
-      <div>
-        <label
-          htmlFor="current-password"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
-          Current Password
-        </label>
-        <input
-          id="current-password"
-          type="password"
-          value={currentPassword}
-          onChange={(e) => setCurrentPassword(e.target.value)}
-          className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-transparent p-2 text-sm focus:border-blue-500 focus:outline-none dark:text-gray-100"
-          required
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="new-password"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
-          New Password
-        </label>
-        <input
-          id="new-password"
-          type="password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-transparent p-2 text-sm focus:border-blue-500 focus:outline-none dark:text-gray-100"
-          required
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="confirm-new-password"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
-          Confirm New Password
-        </label>
-        <input
-          id="confirm-new-password"
-          type="password"
-          value={confirmNewPassword}
-          onChange={(e) => setConfirmNewPassword(e.target.value)}
-          className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-transparent p-2 text-sm focus:border-blue-500 focus:outline-none dark:text-gray-100"
-          required
-        />
-      </div>
-
-      {status && (
-        <p
-          className={`text-sm ${
-            status.type === "success"
-              ? "text-green-600 dark:text-green-400"
-              : "text-red-600 dark:text-red-400"
-          }`}
-        >
-          {status.message}
-        </p>
+    <div className="bg-gray-50 dark:bg-gray-700/50 p-5 rounded-lg">
+      <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Change Password</h3>
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded">
+          {error}
+        </div>
       )}
-
-      <div>
+      {success && (
+        <div className="mb-4 p-3 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded">
+          {success}
+        </div>
+      )}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="oldPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Current Password
+          </label>
+          <input
+            type="password"
+            id="oldPassword"
+            value={oldPassword}
+            onChange={(e) => setOldPassword(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            New Password
+          </label>
+          <input
+            type="password"
+            id="newPassword"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Confirm New Password
+          </label>
+          <input
+            type="password"
+            id="confirmPassword"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
+            required
+          />
+        </div>
         <button
           type="submit"
-          className="mt-2 px-4 py-2 rounded-full text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+          className="w-full px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
         >
           Change Password
         </button>
-      </div>
-    </form>
+      </form>
+    </div>
   );
 };
 
