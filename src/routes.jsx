@@ -115,7 +115,7 @@ import Settings from "./pages/Account/Settings";
 import CategoriesPage from "./pages/Categories/CategoriesPage";
 import CategoryListing from "./pages/Categories/CategoryListing";
 import AdminLayout from "./components/layouts/AdminLayout";
-import {  Dashboard,  Setting,  Products,  AdminOrders,  Categories,} from "./pages/AdminPanel/index";
+import {  Dashboard,  Setting,  Products,  AdminOrders,  Categories,} from "./pages/Admin/index";
 import PrivacyPolicy from "./pages/Policies/PrivacyPolicy";
 import ReturnPolicy from "./pages/Policies/ReturnPolicy";
 import HelpFAQ from "./pages/Policies/HelpFAQ";
