@@ -49,10 +49,10 @@ const ShopApplicationWrapper = () => {
       </main>
       <BottomNav />
       {/* Footer should be outside of Outlet to ensure it appears on all pages */}
-      {!globalLoading && !commonError && <Footer />} {/* Only show footer if not loading and no error */}
+       {/* Only show footer if not loading and no error */}
       
       {/* Optional: If you want to show the footer even when loading or error, you can remove the condition */}
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 };
