@@ -150,7 +150,7 @@ const SearchComponent = ({
         {query && (
           <button
             onClick={clearSearch}
-            className="absolute inset-y-0 right-0 pr-3 flex items-center hover:bg-gray-100 dark:hover:bg-gray-600 rounded-md p-1"
+            className="absolute inset-y-0 right-0 pr-3 flex items-center rounded-md p-1"
           >
             <IoMdClose className="h-4 w-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200" />
           </button>
