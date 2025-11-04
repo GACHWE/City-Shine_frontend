@@ -14,7 +14,7 @@ const NewArrivals = () => {
     dots: true,
     infinite: true,
     speed: 600,
-    slidesToShow: 2, // Default for mobile
+    slidesToShow: 2, 
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 5000,
@@ -27,11 +27,12 @@ const NewArrivals = () => {
           slidesToScroll: 1,
           arrows: true,
         }
-      },
+      }, 
+
       {
         breakpoint: 768, // md breakpoint
         settings: {
-          slidesToShow: 3,
+          slidesToShow: 2,
           slidesToScroll: 1,
           arrows: true,
         }
@@ -39,7 +40,7 @@ const NewArrivals = () => {
       {
         breakpoint: 1024, // lg breakpoint
         settings: {
-          slidesToShow: 4,
+          slidesToShow: 3,
           slidesToScroll: 1,
           arrows: true,
         }
@@ -47,19 +48,20 @@ const NewArrivals = () => {
       {
         breakpoint: 1280, // xl breakpoint
         settings: {
-          slidesToShow: 5,
+          slidesToShow: 4,
           slidesToScroll: 1,
           arrows: true,
         }
       },
       {
-        breakpoint: 1536, // 2xl breakpoint
+        breakpoint: 2500, // 2xl breakpoint
         settings: {
-          slidesToShow: 6,
+          slidesToShow: 5,
           slidesToScroll: 1,
           arrows: true,
         }
-      }
+      },
+
     ]
   };
 
