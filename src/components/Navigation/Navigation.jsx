@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { IoMdSearch } from "react-icons/io";
 import { FiX } from "react-icons/fi";
 import { HiOutlineMenuAlt2 } from "react-icons/hi";
 import DarkMode from "../Darkmode/DarkMode";
-import { AccountIcon } from "../common/AccountIcon";
-import { CartIcon } from "../common/CartIcon";
 import { getAllCategories } from "../../api/fetchCategories";
 import { countCartItems } from "../../store/features/cart";
 import Logo from "../../assets/img/Logo.webp";
 import SearchComponent from "../Search/SearchComponent";
+import { MdOutlineShoppingCart } from "react-icons/md";
+import { FaRegUser } from "react-icons/fa";
+
 export default function Navigation() {
   const navigate = useNavigate();
   const cartLength = useSelector(countCartItems);
@@ -65,11 +65,11 @@ export default function Navigation() {
             </div>
 
             {/* Right: Icons (only visible on lg and above) */}
-            <div className="hidden lg:flex items-center gap-3">
+            <div className="hidden lg:flex items-center gap-4">
               <DarkMode />
 
               <Link to="/cart-items" className="relative">
-                <CartIcon />
+                <MdOutlineShoppingCart size={25} className=""/>
                 {cartLength > 0 && (
                   <span className="absolute -top-2 -right-2 h-5 w-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center">
                     {cartLength}
@@ -77,7 +77,7 @@ export default function Navigation() {
                 )}
               </Link>
               <Link to="/account-details/profile">
-                <AccountIcon />
+                <FaRegUser size={25}/>
               </Link>
             </div>
           </div>
@@ -141,7 +141,7 @@ export default function Navigation() {
               <h2 className="text-lg font-semibold mb-4">All Categories</h2>
               <ul className="space-y-2">
                 {" "}
-                <Link to="/categories" className="px-3 ">
+                <Link to="/categories" className="px-3 hover:bg-blue-100 dark:hover:bg-blue-700">
                   Browse All Categories
                 </Link>
                 {categories.map((cat) => (
@@ -151,7 +151,7 @@ export default function Navigation() {
                         navigate(`/products/${cat.id}`);
                         setSidebarOpen(false);
                       }}
-                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-purple-100 dark:hover:bg-gray-700"
+                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-700"
                     >
                       {cat.name}
                     </button>

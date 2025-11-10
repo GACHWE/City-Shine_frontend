@@ -42,7 +42,7 @@ const CODConfirmation = ({ orderData, onConfirm, onBack, isLoading }) => {
           Delivery Address
         </h3>
         <p className="text-blue-700 dark:text-blue-200">
-          {address.street}, {address.estate}<br />
+          {address.county}, {address.estate}<br />
           {address.county}<br />
           {address.phoneNumber && (
             <span className="flex items-center mt-1">
@@ -62,11 +62,11 @@ const CODConfirmation = ({ orderData, onConfirm, onBack, isLoading }) => {
         <ul className="space-y-2 text-yellow-700 dark:text-yellow-300 text-sm">
           <li className="flex items-start">
             <FaClock className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />
-            Have exact change ready for KES {totalAmount}
+            Have exact money ready for KES {totalAmount}
           </li>
           <li className="flex items-start">
             <FaBox className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />
-            Delivery within 3 business days
+            Delivery within {new Date(deliveryDate).toLocaleDateString()} at {deliveryTime}
           </li>
           <li className="flex items-start">
             <FaPhone className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />

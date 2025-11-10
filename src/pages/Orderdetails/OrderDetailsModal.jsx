@@ -33,7 +33,6 @@ const OrderDetails = ({
 
   const getStatusOptions = () => {
     const baseOptions = [
-      { value: "PENDING", label: "Pending" },
       { value: "CONFIRMED", label: "Confirmed" },
       { value: "PROCESSING", label: "Processing" },
       { value: "DELIVERED", label: "Delivered" },

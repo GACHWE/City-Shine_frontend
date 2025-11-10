@@ -27,7 +27,7 @@ const Footer = () => {
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d189.89750609271067!2d36.822771035118535!3d-1.2808167160160415!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10d519769811%3A0x8277b4d424a1548b!2sNYAHURURU%20HOUSE!5e1!3m2!1sen!2ske!4v1761746717621!5m2!1sen!2ske"
               width="200"
-              height="200"
+              height="150"
               style={{ border: 0}}
               allowFullScreen=""
               loading="lazy"
@@ -129,8 +129,8 @@ const Footer = () => {
             </span>
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d189.89750609271067!2d36.822771035118535!3d-1.2808167160160415!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10d519769811%3A0x8277b4d424a1548b!2sNYAHURURU%20HOUSE!5e1!3m2!1sen!2ske!4v1761746717621!5m2!1sen!2ske"
-              width="200"
-              height="200"
+              width="100"
+              height="100"
               style={{ border: 0}}
               allowFullScreen=""
               loading="lazy"

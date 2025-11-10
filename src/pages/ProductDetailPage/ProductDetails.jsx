@@ -173,7 +173,7 @@ const ProductDetails = () => {
           variantName: `${selectedColor}`,
           quantity: 1,
           subTotal: selectedVariant.price,
-          price: selectedVariant.price,
+          price: product.price,
         })
       );
     } else {

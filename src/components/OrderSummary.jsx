@@ -10,7 +10,7 @@ const OrderSummary = ({ cartItems, subTotal }) => {
           <span>KSh {subTotal}</span>
         </div>
         <div className="flex justify-between text-green-600 dark:text-green-400">
-          <span>Shipping</span>
+          <span>Delivery</span>
           <span>FREE</span>
         </div>
         <hr className="my-3 border-gray-200 dark:border-gray-600" />

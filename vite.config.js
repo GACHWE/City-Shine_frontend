@@ -7,7 +7,7 @@ export default defineConfig({
     port: 3000,
     open: true,
     allowedHosts: [
-      'e724c1a0fc99.ngrok-free.app',
+      '2d8bb05cbedf.ngrok-free.app',
       'precious-beijinho-1b7a24.netlify.app',
     ]
   },

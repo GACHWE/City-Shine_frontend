@@ -1,21 +1,21 @@
 // pages/Cart/Cart.jsx
-import React, { useCallback, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectCartItems } from '../../store/features/cart';
+import React, { useCallback, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { selectCartItems } from "../../store/features/cart";
 import {
   deleteItemFromCartAction,
   updateItemToCartAction,
-} from '../../store/actions/cartAction';
-import DeleteIcon from '../../components/common/DeleteIcon';
-import Modal from 'react-modal';
-import { customStyles } from '../../styles/modal';
-import { isTokenValid } from '../../utils/jwt-helper';
-import { Link, useNavigate } from 'react-router-dom';
-import EmptyCart from '../../assets/img/empty_cart.png';
+} from "../../store/actions/cartAction";
+import DeleteIcon from "../../components/common/DeleteIcon";
+import Modal from "react-modal";
+import { customStyles } from "../../styles/modal";
+import { isTokenValid } from "../../utils/jwt-helper";
+import { Link, useNavigate } from "react-router-dom";
+import EmptyCart from "../../assets/img/empty_cart.png";
 
-const formatter = new Intl.NumberFormat('en-KE', {
-  style: 'currency',
-  currency: 'KES',
+const formatter = new Intl.NumberFormat("en-KE", {
+  style: "currency",
+  currency: "KES",
   minimumFractionDigits: 0,
   maximumFractionDigits: 2,
 });
@@ -58,9 +58,28 @@ const Cart = () => {
     [dispatch]
   );
 
-  const subTotal = useMemo(() => {
+  React.useEffect(() => {
+    console.log('Cart items structure:', cartItems);
+  }, [cartItems]);
+  // const subTotal = useMemo(() => {
+  //   return cartItems.reduce(
+  //     (total, item) => total + item.price * item.quantity,
+  //     0
+  //   );
+  // }, [cartItems]);
+   const subTotal = useMemo(() => {
+    console.log('Calculating subtotal with items:', cartItems.map(item => ({
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity
+    })));
+    
     return cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
+      (total, item) => {
+        const price = Number(item.price) || 0;
+        const quantity = Number(item.quantity) || 0;
+        return total + (price * quantity);
+      },
       0
     );
   }, [cartItems]);
@@ -79,7 +98,7 @@ const Cart = () => {
             <img src={EmptyCart} alt="empty-cart" className="w-40 h-40 mb-4" />
             <p className="text-xl font-semibold mb-1">Your cart is empty</p>
             <p className="text-gray-500 dark:text-gray-400 mb-6">
-              Add items you like to make it happy 😄
+              Add items you like to make it happy
             </p>
             <Link
               to="/"
@@ -93,7 +112,7 @@ const Cart = () => {
             <div className="md:col-span-2 space-y-4">
               {cartItems.map((item) => {
                 // Use the stored variantId on the cart item itself
-                const variantId = item.variantId ?? 'default';
+                const variantId = item.variantId ?? "default";
 
                 return (
                   <div
@@ -110,7 +129,8 @@ const Cart = () => {
                       <p className="text-lg font-semibold">{item.name}</p>
                       {item.variant && (
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Size: {item.variant.size} | Color: {item.variant.color}
+                          Size: {item.variant.size} | Color:{" "}
+                          {item.variant.color}
                         </p>
                       )}
                     </div>
@@ -122,9 +142,11 @@ const Cart = () => {
                           onClick={() => dec(item.productId, variantId)}
                           disabled={item.quantity <= 1}
                           className={`px-3 py-1 rounded-full text-lg font-bold transition
-                            ${item.quantity <= 1
-                              ? 'bg-gray-200 dark:bg-gray-700 opacity-60 cursor-not-allowed'
-                              : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 active:scale-95'}
+                            ${
+                              item.quantity <= 1
+                                ? "bg-gray-200 dark:bg-gray-700 opacity-60 cursor-not-allowed"
+                                : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 active:scale-95"
+                            }
                           `}
                           aria-label="Decrease quantity"
                           title="Decrease quantity"
@@ -140,9 +162,11 @@ const Cart = () => {
                           onClick={() => inc(item.productId, variantId)}
                           disabled={item.quantity >= 10}
                           className={`px-3 py-1 rounded-full text-lg font-bold transition
-                            ${item.quantity >= 10
-                              ? 'bg-gray-200 dark:bg-gray-700 opacity-60 cursor-not-allowed'
-                              : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 active:scale-95'}
+                            ${
+                              item.quantity >= 10
+                                ? "bg-gray-200 dark:bg-gray-700 opacity-60 cursor-not-allowed"
+                                : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 active:scale-95"
+                            }
                           `}
                           aria-label="Increase quantity"
                           title="Increase quantity"
@@ -158,7 +182,7 @@ const Cart = () => {
 
                     <button
                       onClick={() => onDeleteProduct(item.uniqueKey, item.name)}
-                      className="p-2 text-red-500 hover:bg-red-100 dark:hover:bg-red-900 rounded-full transition"
+                      className="p-2 bg-red-400 hover:bg-red-500 dark:hover:bg-red-300  rounded-full transition"
                       aria-label="Remove from cart"
                       title="Remove from cart"
                     >
@@ -192,7 +216,7 @@ const Cart = () => {
               <div className="mt-6">
                 {isLoggedIn ? (
                   <button
-                    onClick={() => navigate('/checkout')}
+                    onClick={() => navigate("/checkout")}
                     className="w-full py-3 bg-black dark:bg-white text-white dark:text-black font-semibold rounded-full hover:bg-gray-800 dark:hover:bg-gray-200 transition-all"
                   >
                     Proceed to Checkout
@@ -217,12 +241,14 @@ const Cart = () => {
         onRequestClose={onCloseModal}
         style={customStyles}
         contentLabel="Remove Item"
+        className=""
       >
         <div className="p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-lg max-w-sm w-full text-center">
           <p className="text-lg font-semibold mb-6">
-            Remove <span className="text-red-500">{deleteItem.name}</span> from your cart?
+            Remove <span className="text-red-500">{deleteItem.name}</span> from
+            your cart?
           </p>
-        <div className="flex gap-4">
+          <div className="flex gap-4">
             <button
               onClick={onCloseModal}
               className="flex-1 py-2 border border-gray-300 dark:border-gray-600 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"

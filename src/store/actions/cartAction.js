@@ -12,20 +12,25 @@ export const addItemToCartAction = (productItem) => (dispatch) => {
     addToCart({
       ...productItem,
       variantId: productItem.variantId ?? "default",
+      price: productItem.price,
+      name: productItem.name,
+      thumbnail: productItem.thumbnail,
+      productId: productItem.productId || productItem.id,
     })
   );
   toast.success(`${productItem.name} added to cart`);
 };
 
-export const updateItemToCartAction = (productId, variantId, change) => (dispatch) => {
-  dispatch(
-    updateQuantity({
-      productId,
-      variantId: variantId ?? "default",
-      change,
-    })
-  );
-};
+export const updateItemToCartAction =
+  (productId, variantId, change) => (dispatch) => {
+    dispatch(
+      updateQuantity({
+        productId,
+        variantId: variantId ?? "default",
+        change,
+      })
+    );
+  };
 
 export const deleteItemFromCartAction = (uniqueKey, name) => (dispatch) => {
   dispatch(removeFromCart(uniqueKey));

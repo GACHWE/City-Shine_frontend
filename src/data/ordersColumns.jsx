@@ -1,6 +1,11 @@
 import { useState } from "react";
 import AdminOrderDetailsModal from "../pages/Orderdetails/OrderDetailsModal";
-import { cancelOrderAPI, markAsDeliveredAPI, markAsProcessingAPI } from "../api/order";
+import {
+  cancelOrderAPI,
+  markAsDeliveredAPI,
+  markAsProcessingAPI,
+  markAsConfirmedAPI,
+} from "../api/order";
 
 const StatusBadge = ({ status, type = "order" }) => {
   const baseClasses = "px-2 py-1 text-xs font-medium rounded-full";
@@ -36,7 +41,7 @@ const StatusBadge = ({ status, type = "order" }) => {
 
 const ViewOrderButton = ({ order, onStatusUpdate, isAdmin = false }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
- return (
+  return (
     <>
       <button
         className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs transition-colors"
@@ -60,23 +65,27 @@ const ViewOrderButton = ({ order, onStatusUpdate, isAdmin = false }) => {
 };
 
 export const ordersColumns = (onCancel, onStatusUpdate, isAdmin = false) => {
-  const safeOnCancel = typeof onCancel === "function" ? onCancel : () => console.warn("onCancel not available");
-  const safeOnStatusUpdate = typeof onStatusUpdate === "function" ? onStatusUpdate : () => console.warn("onStatusUpdate not available");
+  const safeOnCancel =
+    typeof onCancel === "function"
+      ? onCancel
+      : () => console.warn("onCancel not available");
+  const safeOnStatusUpdate =
+    typeof onStatusUpdate === "function"
+      ? onStatusUpdate
+      : () => console.warn("onStatusUpdate not available");
 
   return [
-    {
-      accessorKey: "orderId",
-      header: "Order ID",
-      cell: ({ row }) =>
-        row.original.orderId
-          ? `#${row.original.orderId.substring(0, 8).toUpperCase()}`
-          : "N/A",
-      size: 120,
-    },
-
-    // Admin-only columns
     ...(isAdmin
       ? [
+          {
+            accessorKey: "orderId",
+            header: "Order ID",
+            cell: ({ row }) =>
+              row.original.orderId
+                ? `#${row.original.orderId.substring(0, 8)}`
+                : "N/A",
+            size: 120,
+          },
           {
             accessorKey: "customerName",
             header: "Customer",
@@ -155,11 +164,17 @@ export const ordersColumns = (onCancel, onStatusUpdate, isAdmin = false) => {
       cell: ({ row }) => {
         const order = row.original;
         const status = order.orderStatus || "";
-        const orderId = order.id; // Changed from order.Id to order.id (lowercase)
+        const orderId = order.id; 
 
-        const canCancel = !["CANCELLED", "DELIVERED", "COMPLETED", "PAYMENT_FAILED"].includes(status);
+        const canCancel = ![
+          "CANCELLED",
+          "DELIVERED",
+          "COMPLETED",
+          "PAYMENT_FAILED",
+        ].includes(status);
         const canProcess = status === "CONFIRMED";
         const canDeliver = status === "PROCESSING";
+        const canConfirm = status === "PENDING";
 
         // Handler functions for each action - defined INSIDE the cell function
         const handleCancel = async () => {
@@ -181,6 +196,15 @@ export const ordersColumns = (onCancel, onStatusUpdate, isAdmin = false) => {
           }
         };
 
+        const handleConfirm = async () => {
+          try {
+            await markAsConfirmedAPI(orderId);
+            safeOnStatusUpdate(orderId, "CONFIRMED");
+          } catch (error) {
+            console.error("Failed to mark as confirmed:", error);
+          }
+        };
+
         const handleDeliver = async () => {
           try {
             await markAsDeliveredAPI(orderId);
@@ -192,7 +216,11 @@ export const ordersColumns = (onCancel, onStatusUpdate, isAdmin = false) => {
 
         return (
           <div className="flex space-x-2">
-            <ViewOrderButton order={order} onStatusUpdate={safeOnStatusUpdate} isAdmin={isAdmin} />
+            <ViewOrderButton
+              order={order}
+              onStatusUpdate={safeOnStatusUpdate}
+              isAdmin={isAdmin}
+            />
 
             {canCancel && (
               <button
@@ -201,6 +229,16 @@ export const ordersColumns = (onCancel, onStatusUpdate, isAdmin = false) => {
                 title="Cancel Order"
               >
                 Cancel
+              </button>
+            )}
+
+            {canConfirm && (
+              <button
+                className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs transition-colors"
+                onClick={handleConfirm}
+                title="Mark as Confirmed"
+              >
+                Confirm
               </button>
             )}
 

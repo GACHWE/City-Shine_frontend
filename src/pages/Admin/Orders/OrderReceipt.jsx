@@ -3,7 +3,7 @@
 //   FaTimes,
 //   FaDownload,
 //   FaPrint,
-//   FaStore,
+//   FaElectronics,
 //   FaPhone,
 //   FaEnvelope,
 //   FaReceipt,
@@ -102,7 +102,7 @@
 //                 <img src= {Logo} alt="" className="w-24 h-24 text-blue-600" />
 //                 <div>
 //                   <h2 className="text-2xl font-bold text-gray-800">
-//                     CityShine Store
+//                     CityShine Electronics
 //                   </h2>
 //                   <p className="text-sm text-gray-600">
 //                     Nairobi, Kenya
@@ -260,7 +260,7 @@
 //           </div>
 
 //           <div className="mt-6 text-center text-sm text-gray-600">
-//             <p>Thank you for shopping with CityShine Store!</p>
+//             <p>Thank you for shopping with CityShine Electronics!</p>
 //             <p>Contact us at support@cityshinestore.com for any inquiries.</p>
 //           </div>
 //         </div>
@@ -407,10 +407,10 @@ const OrderReceipt = ({ order, onClose }) => {
             {/* Header Section */}
             <div className="flex justify-between items-center mb-8">
               <div className="flex items-center gap-3">
-                <img src={Logo} alt="CityShine Store Logo" className="w-24 h-24" />
+                <img src={Logo} alt="CityShine Electronics Logo" className="w-24 h-24" />
                 <div>
                   <h2 className="text-2xl font-bold text-gray-800">
-                    CityShine Store
+                    CityShine Electronics
                   </h2>
                   <p className="text-sm text-gray-600">
                     Nairobi, Kenya
@@ -575,7 +575,7 @@ const OrderReceipt = ({ order, onClose }) => {
 
             {/* Footer */}
             <div className="mt-8 text-center text-sm text-gray-600">
-              <p>Thank you for shopping with CityShine Store!</p>
+              <p>Thank you for shopping with CityShine Electronics!</p>
               <p>Contact us at support@cityshinestore.com for any inquiries.</p>
             </div>
           </div>

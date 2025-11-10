@@ -33,17 +33,29 @@ const Shop = () => {
           activeCategories = fetchedCategories;
         }
 
-        // Fetch limited products for each category (4 products per category for home page)
+        // Fetch limited products for each category (6 products per category for home page)
         const productFetches = activeCategories.map(async (category) => {
           try {
             const productsData = await fetchProducts({ 
               categoryId: category.id, 
-              size: 6 // Limit to 6 products per category for home page
+              size: 12 // Fetch more to account for out-of-stock filtering
             });
             
-            // Handle both response formats
+            // Handle both response formats and filter out products with 0 stock
             const products = productsData?.products || productsData || [];
-            return { [category.id]: products.slice(0, 6) }; // Ensure max 6 products
+            
+            // Filter out products where all variants have 0 stock
+            const availableProducts = products.filter(product => {
+              // If product has variants, check if any variant has stock > 0
+              if (product.variants && product.variants.length > 0) {
+                return product.variants.some(variant => variant.stockQuantity > 0);
+              }
+              // If no variants, check product-level stock or assume available
+              // You might need to adjust this based on your actual data structure
+              return true;
+            }).slice(0, 6); // Limit to 6 available products per category
+
+            return { [category.id]: availableProducts };
           } catch (err) {
             console.error(`Error loading products for category ${category.name}:`, err);
             return { [category.id]: [] };
@@ -104,17 +116,18 @@ const Shop = () => {
           categories.map((category) => {
             const categoryProducts = productsByCategory[category.id] || [];
             
+            // Skip categories with no available products
             if (categoryProducts.length === 0) {
-              return null; // Skip categories with no products
+              return null;
             }
 
             return (
               <section 
                 key={category.id} 
                 aria-labelledby={`category-${category.id}`} 
-                className="space-y-4 md:space-y-6 dark:bg-slate-800 p-4 md:p-5 lg:p-6 rounded-lg md:rounded-xl"
+                className="space-y-4 md:space-y-6 bg-white dark:bg-slate-800 p-4 md:p-5 lg:p-6 rounded-lg md:rounded-xl"
               >
-                <div className="flex flex-col xs:flex-row justify-between items-start xs:items-center gap-2 xs:gap-0">
+                <div className="flex flex-col b xs:flex-row justify-between items-start xs:items-center gap-2 xs:gap-0">
                   <h2
                     id={`category-${category.id}`}
                     className="text-xl sm:text-2xl lg:text-2xl xl:text-3xl font-bold text-gray-800 dark:text-white break-words"
@@ -131,34 +144,22 @@ const Shop = () => {
                   </Link>
                 </div>
 
-                {categoryProducts.length > 0 ? (
-                  <>
-                    <Carousel
-                      items={categoryProducts}
-                      renderItem={(product) => (
-                        <div key={product.id} className="flex-shrink-0 px-1 sm:px-2">
-                          <div className="w-full max-w-[180px] xs:max-w-[200px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[260px] xl:max-w-[280px] mx-auto">
-                            <ProductCard product={product} />
-                          </div>
-                        </div>
-                      )}
-                      config={{
-                        mobile: { slidesToShow: 2 },
-                        tablet: { slidesToShow: 3 },
-                        desktop: { slidesToShow: 4 },
-                        largeDesktop: { slidesToShow: 6 }
-                      }}
-                    />
-                    
-                    <div className="text-center lg:hidden">
-                      {/* Mobile view all button if needed */}
+                <Carousel
+                  items={categoryProducts}
+                  renderItem={(product) => (
+                    <div key={product.id} className="flex-shrink-0 px-1 sm:px-2">
+                      <div className="w-full max-w-[180px] xs:max-w-[200px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[260px] xl:max-w-[280px] mx-auto">
+                        <ProductCard product={product} />
+                      </div>
                     </div>
-                  </>
-                ) : (
-                  <p className="text-gray-500 dark:text-gray-400 text-center py-6 md:py-8">
-                    No products available in this category.
-                  </p>
-                )}
+                  )}
+                  config={{
+                    mobile: { slidesToShow: 2 },
+                    tablet: { slidesToShow: 3 },
+                    desktop: { slidesToShow: 4 },
+                    largeDesktop: { slidesToShow: 6 }
+                  }}
+                />
               </section>
             );
           })
