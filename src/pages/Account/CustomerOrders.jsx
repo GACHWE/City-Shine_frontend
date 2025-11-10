@@ -13,6 +13,7 @@ import {
   FaCheckCircle,
   FaTimesCircle,
   FaClock,
+  FaWhatsapp,
 } from "react-icons/fa";
 import { formatCurrency, formatDate, formatOrderId } from "../../utils/format";
 
@@ -27,6 +28,8 @@ const CustomerOrders = () => {
   const [selectedFilter, setSelectedFilter] = useState("ACTIVE");
   const [page, setPage] = useState(0);
   const pageSize = 20;
+
+  const shopNumber = "254739299636";
 
   const filterOptions = [
     { value: "ACTIVE", label: "Active", color: "bg-blue-500" },
@@ -122,6 +125,12 @@ const CustomerOrders = () => {
       default:
         return <FaBox className="w-5 h-5 text-gray-500" />;
     }
+  }, []);
+
+  // Function to generate WhatsApp link for a specific order
+  const getWhatsAppLink = useCallback((orderId) => {
+    const message = `Hello, I'd like more details about my order ${formatOrderId(orderId)}.`;
+    return `https://wa.me/${shopNumber}?text=${encodeURIComponent(message)}`;
   }, []);
 
   useEffect(() => {
@@ -302,7 +311,7 @@ const CustomerOrders = () => {
                 <div className="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
                   <div className="flex flex-col lg:flex-row justify-between items-start gap-3 sm:gap-4">
                     <div className="flex-1 min-w-0">
-                      <div className="flex flex-col xs:flex-row xs:items-center gap-2 sm:gap-3 mb-2">
+                      <div className="flex flex-row xs:items-center gap-2 sm:gap-3 mb-2">
                         <div className="flex items-center gap-2">
                           {getOrderIcon(order.orderStatus)}
                           <h3 className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base truncate">
@@ -314,7 +323,7 @@ const CustomerOrders = () => {
                       <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                         Placed on {formatDate(order.orderDate)}
                       </p>
-                      <div className="flex flex-col xs:flex-row xs:items-center gap-2 sm:gap-4 mt-2">
+                      <div className="flex flex-column xs:items-center gap-2 sm:gap-4 mt-2">
                         <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
                           {formatCurrency(order.totalAmount)}
                         </p>
@@ -323,13 +332,24 @@ const CustomerOrders = () => {
                         </p>
                       </div>
                     </div>
-                    <div className="flex flex-col xs:flex-row gap-2 w-full xs:w-auto mt-3 xs:mt-0">
+                    <div className="flex flex-col xs:flex-row gap-2 xs:w-auto mt-3 xs:mt-0">
                       <button
                         onClick={() => handleViewOrder(order)}
                         className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-lg transition-colors text-xs sm:text-sm"
                       >
                         View Details
                       </button>
+                      {/* WhatsApp Contact */}
+                      <a
+                        href={getWhatsAppLink(order.id)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white px-3 sm:px-4 py-2 rounded-lg transition-colors text-xs sm:text-sm"
+                      >
+                        <FaWhatsapp className="w-4 h-4" />
+                        <span className="hidden sm:inline">WhatsApp</span>
+                        <span className="sm:hidden">Contact</span>
+                      </a>
                       {order.orderStatus !== "CANCELLED" &&
                         order.orderStatus !== "DELIVERED" && (
                           <button

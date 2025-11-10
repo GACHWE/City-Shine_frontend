@@ -151,7 +151,14 @@ const Checkout = () => {
       return "Cash on Delivery is only available for Nairobi county.";
     }
     return null;
-  }, [addressData, selectedDate, selectedTime, paymentMethod, mpesaPhoneNumber, codEligible]);
+  }, [
+    addressData,
+    selectedDate,
+    selectedTime,
+    paymentMethod,
+    mpesaPhoneNumber,
+    codEligible,
+  ]);
 
   const handlePlaceOrder = async () => {
     const validationError = validateForm();
@@ -209,7 +216,7 @@ const Checkout = () => {
           county: addressData.newAddress.county,
           phoneNumber: normalizePhoneNumber(addressData.newAddress.phoneNumber),
           additionalInfo: addressData.newAddress.additionalInfo || "",
-          isDefault: false
+          isDefault: false,
         };
       }
 
@@ -221,7 +228,7 @@ const Checkout = () => {
       console.log("Submitting order data:", orderData);
 
       const response = await placeOrderAPI(orderData);
-      
+
       // Clear cart after successful order
       dispatch(deleteCart());
 
@@ -248,20 +255,25 @@ const Checkout = () => {
         });
       }
 
-      dispatch(showToast({ 
-        message: "Order placed successfully!", 
-        type: "success" 
-      }));
+      dispatch(
+        showToast({
+          message: "Order placed successfully!",
+          type: "success",
+        })
+      );
     } catch (err) {
       console.error("Order placement error:", err);
-      const errorMessage = err.response?.data?.message || 
-                          err.message || 
-                          "Failed to place order. Please try again.";
+      const errorMessage =
+        err.response?.data?.message ||
+        err.message ||
+        "Failed to place order. Please try again.";
       setError(errorMessage);
-      dispatch(showToast({ 
-        message: errorMessage, 
-        type: "error" 
-      }));
+      dispatch(
+        showToast({
+          message: errorMessage,
+          type: "error",
+        })
+      );
     } finally {
       setIsLoading(false);
     }
@@ -346,33 +358,17 @@ const Checkout = () => {
               selectedCounty={selectedCounty}
             />
           </div>
-
-          <button
-            onClick={handlePlaceOrder}
-            disabled={isLoading}
-            className="w-full px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-lg font-semibold transition-colors"
-          >
-            {isLoading ? "Processing..." : "Place Order"}
-          </button>
-
-          {error && <ErrorMessage message={error} />}
-        </div>
-
-        {/* Right Column - Order Summary */}
-        <div className="lg:w-96">
-          <div className="sticky top-6">
-            <OrderSummary
-              cartItems={cartItems}
-              subTotal={subTotal}
-              selectedDate={selectedDate}
-              selectedTime={selectedTime}
-              addressData={addressData}
-              userInfo={userInfo}
-            />
-          </div>
-        </div>
-
-        {/* COD Confirmation Modal */}
+          <div className="">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6">
+              <OrderSummary
+                cartItems={cartItems}
+                subTotal={subTotal}
+                selectedDate={selectedDate}
+                selectedTime={selectedTime}
+                addressData={addressData}
+                userInfo={userInfo}
+              />
+              {/* COD Confirmation Modal */}
         {showCODConfirmation && (
           <CODConfirmation
             orderData={{
@@ -387,10 +383,26 @@ const Checkout = () => {
             isLoading={isLoading}
           />
         )}
+            </div>
+
+            <button
+              onClick={handlePlaceOrder}
+              disabled={isLoading}
+              className="w-full px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-lg font-semibold transition-colors"
+            >
+              {isLoading ? "Processing..." : "Place Order"}
+            </button>
+
+            {error && <ErrorMessage message={error} />}
+          </div>
+
+          {/* Right Column - Order Summary */}
+        </div>
+
+        
       </div>
     </div>
   );
 };
 
 export default React.memo(Checkout);
-

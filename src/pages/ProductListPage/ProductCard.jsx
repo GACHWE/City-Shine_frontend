@@ -23,7 +23,7 @@ const ProductCard = ({ product }) => {
     productResources?.[0]?.url ||
     "https://placehold.co/600x600/94a3b8/e2e8f0?text=No+Image";
 
-  const displayPrice = price ? `Ksh ${price.toFixed(2)}` : "N/A";
+  const displayPrice = price ? `Ksh ${price.toFixed(1)}` : "N/A";
 
   const shopNumber = "254739299636";
   const productUrl = window.location.origin + "/product/" + product.slug;
@@ -49,7 +49,7 @@ const ProductCard = ({ product }) => {
         variantName: `${selectedVariant.color ?? ""} `,
         quantity: 1,
         subTotal: selectedVariant.price ?? price,
-        price: selectedVariant.price ?? price,
+        price: price,
       })
     );
   };

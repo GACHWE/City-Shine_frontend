@@ -125,12 +125,12 @@ const About = () => {
           <p className="text-gray-600 dark:text-gray-400 mb-4">
             Ready to upgrade your home? Visit us today!
           </p>
-          <Link 
-            to="/contact"
+          <a 
+            href="/contact"
             className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             Contact Us
-          </Link>
+          </a>
         </div>
       </div>
     </div>
