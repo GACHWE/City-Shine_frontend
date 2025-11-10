@@ -9,6 +9,7 @@ export default defineConfig({
     allowedHosts: [
       '2d8bb05cbedf.ngrok-free.app',
       'precious-beijinho-1b7a24.netlify.app',
+      'cityshine-sample1.netlify.app',
     ]
   },
   build: {

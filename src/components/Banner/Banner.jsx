@@ -3,9 +3,9 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { motion as Motion } from "framer-motion";
 
-import bannerImg1 from "../../../dist/assets/Adobe--TsQ2ZPh--TsQ2ZPh.png";
-import bannerImg2 from "../../assets/img/mixer.Avif";
-import bannerImg3 from "../../../dist/assets/Adobe--TsQ2ZPh--TsQ2ZPh.png";
+import bannerImg1 from "../../../dist/assets/adobe-bNTliY0y.avif";
+import bannerImg2 from "../../../dist/assets/mixer-BqtnALs6.avif";
+import bannerImg3 from "../../../dist/assets/kettle-DfoBRati.avif";
 
 const Banner = () => {
   const products = [
@@ -27,7 +27,7 @@ const Banner = () => {
     },
     {
       id: 3,
-      title: "Elegant toasters for your kitchen",
+      title: "Elegant kettles for your kitchen",
       subTitle: "Luxury redefined",
       image: bannerImg3,
       layout: "right-text",
