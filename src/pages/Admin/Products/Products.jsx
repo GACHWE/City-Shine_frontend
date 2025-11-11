@@ -29,17 +29,14 @@ const Products = () => {
         config
       );
       
-      // Handle both response formats for backward compatibility
       const responseData = response.data;
       let productsData, totalItems, totalPages;
       
       if (responseData.products !== undefined) {
-        // New paginated response format
         productsData = responseData.products;
         totalItems = responseData.totalItems;
         totalPages = responseData.totalPages;
       } else {
-        // Legacy array format
         productsData = responseData;
         totalItems = responseData.length;
         totalPages = Math.ceil(totalItems / size);
@@ -100,7 +97,6 @@ const Products = () => {
           `${API_BASE_URL}${API_URLS.GET_PRODUCTS}/${productId}`,
           config
         );
-        // Refresh current page
         fetchProducts(pagination.page, pagination.size);
         console.log(`Product with ID ${productId} deleted successfully.`);
       } catch (error) {
@@ -140,33 +136,37 @@ const Products = () => {
   }
 
   return (
-    <div className="pt-20 pb-5 ml-80">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Products</h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+    <div className="pt-20 pb-5 px-4 sm:px-6  lg:mr-6 ">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div className="flex-1 min-w-0">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white truncate">
+            Products
+          </h2>
+          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">
             Showing {products.length} of {pagination.totalItems} products
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
           <button
             onClick={handleRefresh}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm sm:text-base flex-1 sm:flex-none justify-center min-w-[120px]"
             title="Refresh products"
           >
-            <FiRefreshCw className={isLoading ? "animate-spin" : ""} />
-            Refresh
+            <FiRefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
+            <span className="hidden sm:inline">Refresh</span>
           </button>
           <button
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors text-sm sm:text-base flex-1 sm:flex-none justify-center min-w-[140px]"
             onClick={handleAddProduct}
           >
-            <FiPlus />
-            Add Product
+            <FiPlus className="w-4 h-4" />
+            <span>Add Product</span>
           </button>
         </div>
       </div>
 
+      {/* Product Form Modal */}
       {isFormOpen && (
         <ProductForm
           open={isFormOpen}
@@ -176,30 +176,35 @@ const Products = () => {
         />
       )}
 
-      <div className="dark:text-white text-black">
-        <Table
-          data={products}
-          fields={productsColumns(handleEditProduct, handleDeleteProduct)}
-          numberOfRows={pagination.size}
-          enableTopToolBar={true}
-          enableBottomToolBar={true}
-          enablePagination={true}
-          enableRowSelection={false}
-          enableColumnFilters={true}
-          enableEditing={true}
-          enableColumnDragging={true}
-          // Pagination props
-          pagination={{
-            page: pagination.page,
-            totalPages: pagination.totalPages,
-            totalItems: pagination.totalItems,
-            onPageChange: handlePageChange,
-            onPageSizeChange: handlePageSizeChange,
-            pageSizeOptions: [5, 10, 20, 50]
-          }}
-        />
+      {/* Table Section */}
+      <div className="dark:text-white text-black bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="overflow-x-auto">
+          <div className="min-w-[800px] xl:min-w-0">
+            <Table
+              data={products}
+              fields={productsColumns(handleEditProduct, handleDeleteProduct)}
+              numberOfRows={pagination.size}
+              enableTopToolBar={true}
+              enableBottomToolBar={true}
+              enablePagination={true}
+              enableRowSelection={false}
+              enableColumnFilters={true}
+              enableEditing={true}
+              enableColumnDragging={true}
+              pagination={{
+                page: pagination.page,
+                totalPages: pagination.totalPages,
+                totalItems: pagination.totalItems,
+                onPageChange: handlePageChange,
+                onPageSizeChange: handlePageSizeChange,
+                pageSizeOptions: [5, 10, 20, 50]
+              }}
+            />
+          </div>
+        </div>
       </div>
 
+      {/* Error Banner */}
       {error && products.length > 0 && (
         <div className="mt-4 p-3 bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-800 rounded-lg">
           <p className="text-red-700 dark:text-red-400 text-sm">

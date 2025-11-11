@@ -6,8 +6,12 @@ const columnHelper = createColumnHelper();
 export const productsColumns = (onEdit, onDelete) => [
   columnHelper.accessor("id", {
     header: () => "ID",
-    cell: (info) => info.getValue()?.substring(0, 8) + "...",
-    size: 120,
+    cell: (info) => {
+      const value = info.getValue();
+      return value ? `${value.substring(0, 8)}...` : "N/A";
+    },
+    size: 80,
+    minSize: 70,
   }),
 
   columnHelper.accessor("productResources", {
@@ -19,39 +23,49 @@ export const productsColumns = (onEdit, onDelete) => [
         <img
           src={thumbnail}
           alt="Product"
-          className="w-12 h-12 object-cover rounded-md shadow-sm"
+          className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 object-cover rounded-md shadow-sm"
         />
       ) : (
         <span className="text-gray-400 text-xs">No image</span>
       );
     },
-    size: 80,
+    size: 70,
+    minSize: 60,
   }),
 
   columnHelper.accessor("name", {
     header: () => "Name",
-    cell: (info) => (
-      <div className="max-w-[200px] truncate" title={info.getValue()}>
-        {info.getValue()}
-      </div>
-    ),
-    size: 200,
+    cell: (info) => {
+      const value = info.getValue();
+      return (
+        <div 
+          className="max-w-[120px] sm:max-w-[150px] lg:max-w-[200px] truncate" 
+          title={value}
+        >
+          {value}
+        </div>
+      );
+    },
+    size: 150,
+    minSize: 120,
   }),
 
   columnHelper.accessor("categoryName", {
     header: () => "Category",
     cell: (info) => {
       const category = info.getValue();
-       if (typeof category === "string") return category;
+      if (typeof category === "string") return category;
       return category?.name || "Uncategorized";
     },
-    size: 150,
+    size: 120,
+    minSize: 100,
   }),
 
   columnHelper.accessor("brand", {
     header: () => "Brand",
     cell: (info) => info.getValue() || "-",
-    size: 120,
+    size: 100,
+    minSize: 80,
   }),
 
   columnHelper.accessor("price", {
@@ -60,78 +74,74 @@ export const productsColumns = (onEdit, onDelete) => [
       const value = info.getValue();
       return value ? `Ksh ${value.toFixed(2)}` : "Ksh 0.00";
     },
-    size: 100,
+    size: 90,
+    minSize: 80,
   }),
 
   columnHelper.accessor("newArrival", {
-    header: () => "New Arrival",
+    header: () => "New",
     cell: (info) => (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-        info.getValue() 
-          ? "bg-green-100 text-green-800" 
-          : "bg-gray-100 text-gray-800"
-      }`}>
+      <span 
+        className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
+          info.getValue() 
+            ? "bg-green-100 text-green-800" 
+            : "bg-gray-100 text-gray-800"
+        }`}
+      >
         {info.getValue() ? "Yes" : "No"}
       </span>
     ),
-    size: 100,
+    size: 70,
+    minSize: 60,
   }),
 
   columnHelper.accessor("variants", {
-  header: () => "Stock",
-  cell: (info) => {
-    const variants = info.getValue();
-    if (!variants || variants.length === 0) {
-      return <span className="text-gray-500 text-xs">No variants</span>;
-    }
+    header: () => "Stock",
+    cell: (info) => {
+      const variants = info.getValue();
+      if (!variants || variants.length === 0) {
+        return <span className="text-gray-500 text-xs">No variants</span>;
+      }
 
-    // Since each product has only one variant, get the first one
-    const variant = variants[0];
-    const stockQuantity = variant.stockQuantity || 0;
+      const variant = variants[0];
+      const stockQuantity = variant.stockQuantity || 0;
 
-    if (stockQuantity === 0) {
-      return <span className="text-red-600 text-xs font-medium">Out of Stock</span>;
-    }
+      if (stockQuantity === 0) {
+        return <span className="text-red-600 text-xs font-medium whitespace-nowrap">Out of Stock</span>;
+      }
 
-    return (
-      <span className="text-green-700 font-medium text-xs">
-        {stockQuantity} in stock
-      </span>
-    );
-  },
-  size: 120,
-}),
-
-  // columnHelper.accessor("createdAt", {
-  //   header: () => "Created",
-  //   cell: (info) => {
-  //     const date = new Date(info.getValue());
-  //     return date.toLocaleDateString();
-  //   },
-  //   size: 100,
-  // }),
+      return (
+        <span className="text-green-700 font-medium text-xs whitespace-nowrap">
+          {stockQuantity} in stock
+        </span>
+      );
+    },
+    size: 100,
+    minSize: 90,
+  }),
 
   columnHelper.display({
     id: "actions",
     header: () => "Actions",
     cell: ({ row }) => (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 sm:gap-2">
         <button
           onClick={() => onEdit(row.original)}
-          className="p-2 rounded-full text-blue-600 hover:bg-blue-100 transition-colors"
+          className="p-1 sm:p-2 rounded-full text-blue-600 hover:bg-blue-100 transition-colors"
           title="Edit product"
         >
-          <FiEdit />
+          <FiEdit className="w-3 h-3 sm:w-4 sm:h-4" />
         </button>
         <button
           onClick={() => onDelete(row.original.id)}
-          className="p-2 rounded-full text-red-600 hover:bg-red-100 transition-colors"
+          className="p-1 sm:p-2 rounded-full text-red-600 hover:bg-red-100 transition-colors"
           title="Delete product"
         >
-          <FiTrash2 />
+          <FiTrash2 className="w-3 h-3 sm:w-4 sm:h-4" />
         </button>
       </div>
     ),
-    size: 100,
+    size: 80,
+    minSize: 70,
   }),
 ];
