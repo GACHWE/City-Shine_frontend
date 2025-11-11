@@ -148,7 +148,7 @@ const Shop = () => {
                   items={categoryProducts}
                   renderItem={(product) => (
                     <div key={product.id} className="flex-shrink-0 px-1 sm:px-2">
-                      <div className="w-full max-w-[180px] xs:max-w-[200px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[260px] xl:max-w-[280px] mx-auto">
+                      <div className="w-full max-w-[150px] xs:max-w-[200px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[260px] xl:max-w-[280px] mx-auto">
                         <ProductCard product={product} />
                       </div>
                     </div>
