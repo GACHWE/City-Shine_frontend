@@ -11,11 +11,11 @@ import { FaLocationDot } from "react-icons/fa6";
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-br from-white to-gray-200 text-gray-900 dark:bg-gradient-to-tr dark:from-gray-900 dark:to-gray-800 dark:text-gray-200 duration-200">
+    <footer className="dark:text-gray-200 duration-200">
       <div className="container mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Brand */}
         <div>
-          <h1 className="font-bold text-2xl mb-3 text-blue-500 dark:text-blue-400">
+          <h1 className="font-bold text-2xl mb-3 text-blue-400">
             City-Shine
           </h1>
           <p className="text-sm mb-4">A haven of all your home electronics.</p>
@@ -49,7 +49,7 @@ const Footer = () => {
 
         {/* Customer Service */}
         <div>
-          <h2 className="font-semibold  text-blue-500 text-lg mb-3">
+          <h2 className="font-semibold  text-blue-400 text-lg mb-3">
             Customer Service
           </h2>
           <nav className="flex flex-col gap-2 text-sm">
@@ -70,7 +70,7 @@ const Footer = () => {
 
         {/* Contact */}
         <div>
-          <h2 className="font-semibold text-blue-500 text-lg mb-3">
+          <h2 className="font-semibold text-blue-400 text-lg mb-3">
             Contact Us
           </h2>
           <div className="flex flex-col gap-2 text-sm">
@@ -144,7 +144,7 @@ const Footer = () => {
         <Link to="/privacy-policy"><p>
           &copy; {new Date().getFullYear()} City-Shine | All rights reserved
         </p></Link>
-        <p className="mt-1 text-gray-500">Developed by Gachwe</p>
+        <a href="https://gachwe-portfolio.vercel.app/" className="mt-1 text-blue-400 hover:underline">Developed by Gachwe</a>
       </div>
     </footer>
   );

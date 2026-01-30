@@ -40,7 +40,7 @@ export default function Navigation() {
 
   return (
     <>
-      <div className="pb-2 sticky top-0 z-50">
+      <div className=" sticky top-0 z-50">
         {/* --- Top Nav --- */}
         <nav className="sticky top-0 z-50  bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700">
           <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">

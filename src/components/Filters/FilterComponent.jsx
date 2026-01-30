@@ -219,20 +219,37 @@ const FilterComponent = ({
 
         {/* New Arrival */}
         <FilterSection title="Features" sectionKey="features">
-          <label className="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
-            <input
-              type="checkbox"
-              checked={safeFilters.newArrival}
-              onChange={(e) =>
-                onFilterChange((prev) => ({
-                  ...prev,
-                  newArrival: e.target.checked,
-                }))
-              }
-              className="w-4 h-4 accent-blue-600 dark:accent-blue-400"
-            />
-            <span className="text-sm">New Arrivals Only</span>
-          </label>
+          <div>
+            <label className="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
+              <input
+                type="checkbox"
+                checked={safeFilters.newArrival}
+                onChange={(e) =>
+                  onFilterChange((prev) => ({
+                    ...prev,
+                    newArrival: e.target.checked,
+                  }))
+                }
+                className="w-4 h-4 accent-blue-600 dark:accent-blue-400"
+              />
+              <span className="text-sm">New Arrivals Only</span>
+            </label>
+            {/* Add Featured Filter */}
+            <label className="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
+              <input
+                type="checkbox"
+                checked={safeFilters.featured || false}
+                onChange={(e) =>
+                  onFilterChange((prev) => ({
+                    ...prev,
+                    featured: e.target.checked,
+                  }))
+                }
+                className="w-4 h-4 accent-yellow-500 dark:accent-yellow-400"
+              />
+              <span className="text-sm">Featured Products Only</span>
+            </label>
+          </div>
         </FilterSection>
 
         {/* Brands */}

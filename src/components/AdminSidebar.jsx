@@ -1,25 +1,15 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { 
-  FiHome, 
-  FiBox, 
-  FiShoppingCart, 
-  FiUsers, 
-  FiSettings, 
-  FiLogOut, 
-  FiUser, 
-  FiTag,
-  FiX 
-} from "react-icons/fi";
+import { FiBox, FiShoppingCart, FiUsers, FiSettings, FiLogOut, FiUser, FiTag, FiX} from "react-icons/fi";
 import { logOut } from "../utils/jwt-helper";
 
 const navigation = [
-  { name: "Dashboard", path: "/admin", icon: FiHome },
+  // { name: "Dashboard", path: "/admin", icon: FiHome },
   { name: "Products", path: "/admin/products", icon: FiBox },
   { name: "Orders", path: "/admin/orders", icon: FiShoppingCart },
-  { name: "Users", path: "/admin/users", icon: FiUsers },
+  { name: "Offers", path: "/admin/feature-product", icon: FiUsers },
   { name: "Categories", path: "/admin/categories", icon: FiTag },
-  { name: "Settings", path: "/admin/settings", icon: FiSettings },
+  // { name: "Settings", path: "/admin/settings", icon: FiSettings },
 ];
 
 const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
