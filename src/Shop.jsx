@@ -94,7 +94,7 @@ const Shop = () => {
   }
 
   return (
-    <main className="min-h-screen bg-[#f7f6f0] dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+    <main className=" bg-[#f7f6f0] dark:bg-gray-900 text-gray-800 dark:text-gray-100">
       {/* Banner */}
       <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 pt-2">
         <Banner />
@@ -148,13 +148,13 @@ const Shop = () => {
                   items={categoryProducts}
                   renderItem={(product) => (
                     <div key={product.id} className="flex-shrink-0 px-1 sm:px-2">
-                      <div className="w-full max-w-[150px] xs:max-w-[200px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[260px] xl:max-w-[280px] mx-auto">
-                        <ProductCard product={product} />
+                      <div className="w-full  max-w-48 xs:max-w-[200px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[260px] xl:max-w-[280px] mx-auto">
+                        <ProductCard product={product} className=""/>
                       </div>
                     </div>
                   )}
                   config={{
-                    mobile: { slidesToShow: 2 },
+                    mobile: { slidesToShow: 3 },
                     tablet: { slidesToShow: 3 },
                     desktop: { slidesToShow: 4 },
                     largeDesktop: { slidesToShow: 6 }

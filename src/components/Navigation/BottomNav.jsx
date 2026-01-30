@@ -37,7 +37,7 @@ export default function BottomNav() {
 
   return (
     <nav
-      className={`fixed bottom-3 left-1/2 -translate-x-1/2 w-[95%] max-w-md lg:hidden 
+      className={`fixed bottom-3 left-1/2 -translate-x-1/2 w-[85%] max-w-md lg:hidden 
       bg-[#f7f6f0] dark:bg-gray-900 text-gray-900 dark:text-white 
       border border-gray-200 dark:border-gray-700 
       shadow-lg rounded-2xl z-50 transition-transform duration-300

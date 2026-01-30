@@ -65,7 +65,7 @@ const Carousel = ({ items, renderItem, className = "" }) => {
         {items.map((item, index) => (
           <div
             key={index}
-            className="flex-shrink-0 w-[45vw] sm:w-[250px] md:w-[220px] lg:w-[250px] snap-start"
+            className="flex-shrink-0  snap-start"
           >
             {renderItem(item)}
           </div>

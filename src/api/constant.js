@@ -8,7 +8,7 @@ export const API_URLS = {
   CANCEL_ORDER: (id) => `/api/admin/orders/${id}/cancel`,
 };
 
-export const API_BASE_URL = "https://cityshine-backend-production.up.railway.app";
+export const API_BASE_URL = "http://localhost:8080";
 
 export const getHeaders = () => {
   return {

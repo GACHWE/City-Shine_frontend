@@ -12,6 +12,6 @@ export { default as AdminOrders } from "./Orders/AdminOrders";
 // export { default as SingleOrder } from "./SingleOrder";
 // export { default as Suppliers } from "./Suppliers";
 // export { default as Transactions } from "./Transactions";
-// export { default as Brands } from "./Brands";
+export { default as FeatureProductForm } from "./Products/FeatureProductPage";
 // export { default as Reviews } from "./Reviews";
 export { default as Setting } from "./Setting";

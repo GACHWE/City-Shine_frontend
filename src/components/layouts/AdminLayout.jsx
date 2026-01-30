@@ -4,7 +4,7 @@ import Sidebar from '../AdminSidebar';
 import { FaBars, FaTimes } from 'react-icons/fa';
 
 const AdminHeader = ({ toggleSidebar, isSidebarOpen }) => (
-  <div className="h-16 bg-white dark:bg-gray-800 shadow-sm flex items-center px-4 sm:px-6 md:px-8">
+  <div className="h-10 bg-white dark:bg-gray-800 shadow-sm flex items-center ">
     <button
       className="md:hidden text-gray-600 dark:text-gray-300 focus:outline-none p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
       onClick={toggleSidebar}
@@ -12,9 +12,6 @@ const AdminHeader = ({ toggleSidebar, isSidebarOpen }) => (
     >
       {isSidebarOpen ? <FaTimes className="w-5 h-5" /> : <FaBars className="w-5 h-5" />}
     </button>
-    <div className="flex-1  sm:text-left text-lg sm:text-xl font-medium text-gray-700 dark:text-gray-300">
-      Admin Dashboard
-    </div>
   </div>
 );
 
@@ -53,8 +50,10 @@ const AdminLayout = () => {
         <AdminHeader 
           toggleSidebar={toggleSidebar} 
           isSidebarOpen={isSidebarOpen} 
+        className= "bg-yellow-200"
         />
-        <main className=" flex-1 max-w-full overflow-x-auto ">
+
+        <main >
           <Outlet />
         </main>
       </div>

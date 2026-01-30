@@ -561,7 +561,7 @@ const ProductListing = ({
               </div>
 
               {/* Consistent Product Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 mb-8">
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 sm:gap-6 mb-8">
                 {filteredProducts.map((product) => (
                   <div key={product.id} className="flex justify-center">
                     <ProductCard product={product} />
